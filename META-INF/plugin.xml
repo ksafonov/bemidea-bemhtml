@@ -28,8 +28,9 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <lang.parserDefinition language="BemHtml" implementationClass="bem.idea.bemhtml.lang.parser.BemHtmlParserDefinition"/>
-        <colorSettingsPage implementation="bem.idea.bemhtml.highlighter.BemHtmlColorSettingsPage"/>
+        <lang.braceMatcher language="BemHtml" implementationClass="bem.idea.bemhtml.file.BemHtmlBraceMatcher"/>
         <lang.fileViewProviderFactory language="BemHtml" implementationClass="bem.idea.bemhtml.file.BemHtmlFileViewProviderFactory"/>
+        <colorSettingsPage implementation="bem.idea.bemhtml.highlighter.BemHtmlColorSettingsPage"/>
     </extensions>
 
 </idea-plugin>
