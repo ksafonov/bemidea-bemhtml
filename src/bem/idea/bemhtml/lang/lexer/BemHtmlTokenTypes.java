@@ -1,0 +1,36 @@
+package bem.idea.bemhtml.lang.lexer;
+
+import com.intellij.psi.TokenType;
+import com.intellij.psi.tree.IElementType;
+
+public interface BemHtmlTokenTypes {
+
+    public static final IElementType WHITE_SPACE = TokenType.WHITE_SPACE;
+    public static final IElementType BAD_CHARACTER = new BemHtmlElementType("BAD_CHARACTER");
+
+    public static final IElementType KEYWORDS_DELIM = new BemHtmlElementType("KEYWORDS_DELIM");
+    public static final IElementType KEYWORDS_COLON = new BemHtmlElementType("KEYWORDS_COLON");
+    public static final IElementType KEYWORDS_VALUE = new BemHtmlElementType("KEYWORDS_VALUE");
+    public static final IElementType BEM_VALUE = new BemHtmlElementType("BEM_VALUE");
+
+    public static final IElementType KEYWORD_BLOCK = new BemHtmlElementType("KEYWORD_BLOCK");
+    public static final IElementType KEYWORD_ELEM = new BemHtmlElementType("KEYWORD_ELEM");
+    public static final IElementType KEYWORD_MOD = new BemHtmlElementType("KEYWORD_MOD");
+    public static final IElementType KEYWORD_ELEMMOD = new BemHtmlElementType("KEYWORD_ELEMMOD");
+
+    public static final IElementType KEYWORD_DEFAULT = new BemHtmlElementType("KEYWORD_DEFAULT");
+    public static final IElementType KEYWORD_TAG = new BemHtmlElementType("KEYWORD_TAG");
+    public static final IElementType KEYWORD_ATTRS = new BemHtmlElementType("KEYWORD_ATTRS");
+    public static final IElementType KEYWORD_CLS = new BemHtmlElementType("KEYWORD_CLS");
+    public static final IElementType KEYWORD_BEM = new BemHtmlElementType("KEYWORD_BEM");
+    public static final IElementType KEYWORD_JS = new BemHtmlElementType("KEYWORD_JS");
+    public static final IElementType KEYWORD_JSATTR = new BemHtmlElementType("KEYWORD_JSATTR");
+    public static final IElementType KEYWORD_MIX = new BemHtmlElementType("KEYWORD_MIX");
+    public static final IElementType KEYWORD_CONTENT = new BemHtmlElementType("KEYWORD_CONTENT");
+
+    public static final IElementType LEFT_BRACE = new BemHtmlElementType("LEFT_BRACE");
+    public static final IElementType RIGHT_BRACE = new BemHtmlElementType("RIGHT_BRACE");
+
+    public static final IElementType JAVASCRIPT_CODE = new BemHtmlElementType("JAVASCRIPT_CODE");
+
+}

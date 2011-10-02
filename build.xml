@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="bemhtml">
+
+    <!-- Define build properties -->
+
+    <property file="build.properties"/>
+
+    <!-- Reference the IDEA classpath from the local IDE installation -->
+
+    <path id="ideax.classpath">
+        <fileset dir="${ideax.source}">
+            <include name="lib/*.jar"/>
+        </fileset>
+        <fileset dir="${ideax.app}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <!-- Define the java compiler task -->
+
+    <taskdef name="javacIdeax" classname="com.intellij.ant.Javac2">
+        <classpath refid="ideax.classpath"/>
+    </taskdef>
+
+    <!-- Define the jflex compiler task -->
+
+    <taskdef name="jflexIdeax" classname="JFlex.anttask.JFlexTask">
+        <classpath location="${ideax.source}/tools/lexer/jflex-1.4/lib/JFlex.jar"/>
+    </taskdef>
+
+    <!-- Clean up generated files -->
+
+    <target name="clean">
+        <delete dir="target"/>
+    </target>
+
+    <!-- Create target directories -->
+
+    <target name="init" depends="clean">
+        <mkdir dir="target/ideax-classes/META-INF"/>
+        <mkdir dir="target/test-clp"/>
+        <mkdir dir="target/jar"/>
+    </target>
+
+    <!-- Copy compilation resources -->
+
+    <target name="resources-ideax" depends="init">
+        <copy todir="target/ideax-classes">
+            <fileset dir="resources"/>
+        </copy>
+    </target>
+
+    <!-- Generate the lexer class -->
+
+    <target name="generate-ideax-lexer">
+        <jflexIdeax skeleton="${ideax.source}/tools/lexer/idea-flex.skeleton" nobak="true"
+                    file="src/bem/idea/bemhtml/lang/lexer/bemhtml.flex"
+                    destdir="src"
+                    charat="true"/>
+    </target>
+
+    <!-- Compile the plugin -->
+
+<!--    <target name="compile-ideax" depends="resources-ideax, generate-ideax-lexer"> -->
+    <target name="compile-ideax" depends="resources-ideax, generate-ideax-lexer">
+        <javacIdeax srcdir="src" destdir="target/ideax-classes" source="1.5" target="1.5" includeantruntime="yes">
+            <classpath refid="ideax.classpath"/>
+        </javacIdeax>
+    </target>
+
+    <!-- Build the jar -->
+
+    <target name="jar" depends="compile-ideax" description="Build the plugin jar">
+        <copy file="META-INF/plugin.xml" todir="target/ideax-classes/META-INF">
+            <filterset>
+                <filter token="version" value="1.0.0"/>
+            </filterset>
+        </copy>
+        <jar destfile="target/jar/bemhtml-1.0.0.jar" compress="true">
+            <fileset dir="target/ideax-classes"/>
+        </jar>
+    </target>
+
+    <!-- Install plugin to IntelliJ IDEA 10-->
+
+    <target name="install-idea-10" depends="jar" description="Install the plugin to IntelliJ IDEA 10">
+        <mkdir dir="${user.home}/Library/Application Support/IntelliJIdea10"/>
+        <delete dir="${user.home}/Library/Application Support/IntelliJIdea10" includes="test-clp*.jar"/>
+        <copy todir="${user.home}/Library/Application Support/IntelliJIdea10">
+            <fileset dir="${basedir}/target/jar" includes="*.jar"/>
+        </copy>
+    </target>
+
+    <!-- Install plugin to IntelliJ WebStorm 2 -->
+
+    <target name="install-webstorm-2" depends="jar" description="Install the plugin to IntelliJ WebStorm 2">
+        <mkdir dir="${user.home}/Library/Application Support/WebIDE10"/>
+        <delete dir="${user.home}/Library/Application Support/WebIDE10" includes="bemhtml*.jar"/>
+        <copy todir="${user.home}/Library/Application Support/WebIDE10">
+            <fileset dir="${basedir}/target/jar" includes="*.jar"/>
+        </copy>
+    </target>
+
+</project>
