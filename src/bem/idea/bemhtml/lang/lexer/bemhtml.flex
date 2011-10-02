@@ -212,7 +212,7 @@ Block = "{" (. | {LineTerminator})+
     "["             { sBraceCounter++; return continueOJSE(); }
     "]"             { sBraceCounter--; return continueOJSE(); }
     "{"|"}"|":"|"," {
-                        if (rBraceCounter > 0) { return continueOJSE(); }
+                        if (rBraceCounter > 0 || sBraceCounter > 0) { return continueOJSE(); }
                         else {
                             t = finalizeOJSE(tokens.get(yytext().toString()));
                             if (t != null) return t;
