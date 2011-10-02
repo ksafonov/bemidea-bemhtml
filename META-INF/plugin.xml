@@ -26,6 +26,9 @@
         <component>
             <implementation-class>bem.idea.bemhtml.lang.injection.BemHtmlJavaScriptInjectionComponent</implementation-class>
         </component>
+        <component>
+            <implementation-class>bem.idea.bemhtml.BemHtmlProjectComponent</implementation-class>
+        </component>
     </project-components>
 
     <actions>
@@ -35,6 +38,7 @@
         <lang.parserDefinition language="BemHtml" implementationClass="bem.idea.bemhtml.lang.parser.BemHtmlParserDefinition"/>
         <lang.braceMatcher language="BemHtml" implementationClass="bem.idea.bemhtml.file.BemHtmlBraceMatcher"/>
         <lang.fileViewProviderFactory language="BemHtml" implementationClass="bem.idea.bemhtml.file.BemHtmlFileViewProviderFactory"/>
+        <lang.psiStructureViewFactory  language="BemHtml" implementationClass="bem.idea.bemhtml.structure.BemHtmlStructureViewBuilderFactory"/>
         <colorSettingsPage implementation="bem.idea.bemhtml.highlighter.BemHtmlColorSettingsPage"/>
     </extensions>
 

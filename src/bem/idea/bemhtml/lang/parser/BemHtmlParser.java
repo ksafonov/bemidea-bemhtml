@@ -25,14 +25,30 @@ public class BemHtmlParser implements PsiParser {
         IElementType first = builder.getTokenType();
         if (first == BemHtmlTokenTypes.JAVASCRIPT_CODE ||
                 first == BemHtmlTokenTypes.KEYWORDS_VALUE ||
-                first == BemHtmlTokenTypes.BEM_VALUE) {
-            parseJavaScript(builder, first);
+                first == BemHtmlTokenTypes.KEYWORDS_DELIM ||
+                first == BemHtmlTokenTypes.KEYWORDS_COLON ||
+                first == BemHtmlTokenTypes.BEM_VALUE ||
+                first == BemHtmlTokenTypes.WHITE_SPACE ||
+                first == BemHtmlTokenTypes.KEYWORD_ATTRS ||
+                first == BemHtmlTokenTypes.KEYWORD_BEM ||
+                first == BemHtmlTokenTypes.KEYWORD_BLOCK ||
+                first == BemHtmlTokenTypes.KEYWORD_CLS ||
+                first == BemHtmlTokenTypes.KEYWORD_CONTENT ||
+                first == BemHtmlTokenTypes.KEYWORD_DEFAULT ||
+                first == BemHtmlTokenTypes.KEYWORD_ELEM ||
+                first == BemHtmlTokenTypes.KEYWORD_ELEMMOD ||
+                first == BemHtmlTokenTypes.KEYWORD_JS ||
+                first == BemHtmlTokenTypes.KEYWORD_JSATTR ||
+                first == BemHtmlTokenTypes.KEYWORD_MIX ||
+                first == BemHtmlTokenTypes.KEYWORD_MOD ||
+                first == BemHtmlTokenTypes.KEYWORD_TAG) {
+            parseToken(builder, first);
         } else {
             builder.advanceLexer();
         }
     }
 
-    private void parseJavaScript(PsiBuilder builder, IElementType type) {
+    private void parseToken(PsiBuilder builder, IElementType type) {
         PsiBuilder.Marker marker = builder.mark();
         builder.advanceLexer();
         marker.done(type);

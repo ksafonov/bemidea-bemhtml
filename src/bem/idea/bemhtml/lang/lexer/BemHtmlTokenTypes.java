@@ -1,11 +1,10 @@
 package bem.idea.bemhtml.lang.lexer;
 
-import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 
 public interface BemHtmlTokenTypes {
 
-    public static final IElementType WHITE_SPACE = TokenType.WHITE_SPACE;
+    public static final IElementType WHITE_SPACE = new BemHtmlElementType("WHITE_SPACE");
     public static final IElementType BAD_CHARACTER = new BemHtmlElementType("BAD_CHARACTER");
 
     public static final IElementType KEYWORDS_DELIM = new BemHtmlElementType("KEYWORDS_DELIM");

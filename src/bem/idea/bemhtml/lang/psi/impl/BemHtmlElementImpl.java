@@ -1,6 +1,6 @@
 package bem.idea.bemhtml.lang.psi.impl;
 
-import bem.idea.bemhtml.BemHtmlLanguage;
+import bem.idea.bemhtml.file.BemHtmlFileType;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.intellij.lang.ASTNode;
 import bem.idea.bemhtml.lang.psi.BemHtmlElement;
@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class BemHtmlElementImpl extends ASTWrapperPsiElement implements BemHtmlElement {
 
-    private final static Language language = new BemHtmlLanguage();
     private final ASTNode node;
 
     public BemHtmlElementImpl(final ASTNode node) {
@@ -19,7 +18,7 @@ public class BemHtmlElementImpl extends ASTWrapperPsiElement implements BemHtmlE
 
     @NotNull
     public Language getLanguage() {
-        return language;
+        return BemHtmlFileType.getFileLanguage();
     }
 
     public String toString() {

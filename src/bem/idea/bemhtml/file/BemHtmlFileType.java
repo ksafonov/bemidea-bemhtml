@@ -42,4 +42,9 @@ public class BemHtmlFileType extends LanguageFileType {
     public static FileType getFileType() {
         return BEMHTML_FILE_TYPE;
     }
+
+    public static Language getFileLanguage() {
+        return BEMHTML_LANGUAGE;
+    }
+
 }
