@@ -4,7 +4,7 @@ IntelliJ IDEA plugin for BEMHTML language support.
 
 # Installation
 
-1. In your IDEA/WebStorm/PhpStorm IDE open `Preferences -> Updates` tab.
+1. In your IDEA10/WebStorm2/PhpStorm2 IDE open `Preferences -> Updates` tab.
 
 2. Add new plugin host: http://cloud.github.com/downloads/afelix/bemidea-bemhtml/pluginHost.xml
 
@@ -18,7 +18,7 @@ IntelliJ IDEA plugin for BEMHTML language support.
 
 # Update
 
-1. In your IDEA/WebStorm/PhpStorm IDE open `Preferences -> Updates` tab.
+1. In your IDEA10/WebStorm2/PhpStorm2 IDE open `Preferences -> Updates` tab.
 
 2. Click `Check now` button.
 
