@@ -1,0 +1,3 @@
+<plugins>
+    <plugin id="BemHtml" url="http://cloud.github.com/downloads/afelix/bemidea-bemhtml/bemhtml-1.0.3.jar" version="1.0.3"/>
+</plugins>
