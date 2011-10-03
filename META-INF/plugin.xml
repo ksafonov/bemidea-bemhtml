@@ -4,6 +4,9 @@
     <version>1.0.3</version>
     <vendor url="https://github.com/afelix/bemidea-bemhtml">BEM</vendor>
     <change-notes><![CDATA[
+    <h3>1.0.3</h3><ul>
+        <li>Temporary hack: hide file reload exception on plugin startup.</li>
+        </ul>
     <h3>1.0.2</h3><ul>
         <li>Basic structure view.</li>
         </ul>
