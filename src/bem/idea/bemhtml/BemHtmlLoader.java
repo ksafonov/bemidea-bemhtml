@@ -50,8 +50,12 @@ public class BemHtmlLoader implements ApplicationComponent, FileDocumentManagerL
     // Hack to force highlighting
     public void fileContentLoaded(VirtualFile file, Document document) {
         if (file.getFileType() == BemHtmlFileType.getFileType() && !touchedFiles.contains(file.getName())) {
-            FileDocumentManager.getInstance().reloadFromDisk(document);
-            touchedFiles.add(file.getName());
+            try {
+                FileDocumentManager.getInstance().reloadFromDisk(document);
+                touchedFiles.add(file.getName());
+            } catch (Exception e) {
+                // have to do it now :(
+            }
         }
     }
 
