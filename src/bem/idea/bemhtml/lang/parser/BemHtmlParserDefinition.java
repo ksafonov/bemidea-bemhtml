@@ -55,7 +55,7 @@ public class BemHtmlParserDefinition implements ParserDefinition {
     public PsiElement createElement(ASTNode node) {
         if (node.getElementType() == BemHtmlTokenTypes.JAVASCRIPT_CODE) {
             return new BemHtmlJavaScriptCodeImpl(node);
-        } else if (node.getElementType() == BemHtmlTokenTypes.KEYWORDS_VALUE) {
+        } else if (node.getElementType() == BemHtmlTokenTypes.JS_EXPRESSION) {
             return new BemHtmlAsgnExprImpl(node);
         } else if (node.getElementType() == BemHtmlTokenTypes.BEM_VALUE) {
             return new BemHtmlBemValueImpl(node);

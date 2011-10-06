@@ -31,13 +31,13 @@ public class BemHtmlJavaScriptInjector implements LanguageInjector {
             BemHtmlAsgnExpr host = (BemHtmlAsgnExpr)_host;
             registrar.addPlace(Language.findLanguageByID("JavaScript"),
                             new TextRange(0, host.getTextLength()), jsPrefix + "return ", "}");
-        } else if (_host instanceof BemHtmlBemValue) {
+        }/* else if (_host instanceof BemHtmlBemValue) {
             BemHtmlBemValue host = (BemHtmlBemValue)_host;
             if (!host.getText().matches("^[\\w\\-]+$")) {
                 registrar.addPlace(Language.findLanguageByID("JavaScript"),
                                 new TextRange(0, host.getTextLength()), jsPrefix + "return ", "}");
             }
-        }
+        }*/
     }
 
 }

@@ -21,6 +21,7 @@ public class BemHtmlSyntaxHighlighter extends SyntaxHighlighterBase {
 
     private static final TextAttributes taBemKeyword = new TextAttributes(new Color(0, 0, 139), null, null, null, Font.BOLD);
     private static final TextAttributes taBemValue = new TextAttributes(new Color(69, 139, 0), null, null, null, Font.BOLD);
+    private static final TextAttributes taJSONProperty = new TextAttributes(new Color(0, 0, 139), null, null, null, Font.PLAIN);
     private static final TextAttributes taJSBraces = new TextAttributes(new Color(0, 0, 0), null, null, null, Font.PLAIN);
     private static final TextAttributes taBemKeywordsDelim = new TextAttributes(new Color(0, 0, 0), null, null, null, Font.PLAIN);
     private static final TextAttributes taBemKeywordsColon = new TextAttributes(new Color(0, 0, 0), null, null, null, Font.PLAIN);
@@ -44,6 +45,9 @@ public class BemHtmlSyntaxHighlighter extends SyntaxHighlighterBase {
 
     static final TextAttributesKey BEM_VALUE = TextAttributesKey.createTextAttributesKey(
             "bemhtml.bem.value", taBemValue);
+
+    static final TextAttributesKey JSON_PROPERTY = TextAttributesKey.createTextAttributesKey(
+            "bemhtml.json.property", taJSONProperty);
 
     static final TextAttributesKey KEYWORD_BLOCK = TextAttributesKey.createTextAttributesKey(
             "bemhtml.keyword.block", taBemKeyword);
@@ -95,6 +99,7 @@ public class BemHtmlSyntaxHighlighter extends SyntaxHighlighterBase {
         TOKENS_TO_STYLES.put(BemHtmlTokenTypes.KEYWORDS_DELIM, KEYWORDS_DELIM);
         TOKENS_TO_STYLES.put(BemHtmlTokenTypes.KEYWORDS_COLON, KEYWORDS_COLON);
         TOKENS_TO_STYLES.put(BemHtmlTokenTypes.BEM_VALUE, BEM_VALUE);
+        TOKENS_TO_STYLES.put(BemHtmlTokenTypes.JSON_PROPERTY, JSON_PROPERTY);
         TOKENS_TO_STYLES.put(BemHtmlTokenTypes.KEYWORD_BLOCK, KEYWORD_BLOCK);
         TOKENS_TO_STYLES.put(BemHtmlTokenTypes.KEYWORD_ELEM, KEYWORD_ELEM);
         TOKENS_TO_STYLES.put(BemHtmlTokenTypes.KEYWORD_MOD, KEYWORD_MOD);

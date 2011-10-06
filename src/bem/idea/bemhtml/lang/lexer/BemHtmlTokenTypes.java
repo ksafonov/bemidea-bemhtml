@@ -11,6 +11,8 @@ public interface BemHtmlTokenTypes {
     public static final IElementType KEYWORDS_COLON = new BemHtmlElementType("KEYWORDS_COLON");
     public static final IElementType KEYWORDS_VALUE = new BemHtmlElementType("KEYWORDS_VALUE");
     public static final IElementType BEM_VALUE = new BemHtmlElementType("BEM_VALUE");
+    public static final IElementType JS_EXPRESSION = new BemHtmlElementType("JS_EXPRESSION");
+    public static final IElementType JSON_PROPERTY = new BemHtmlElementType("JSON_PROPERTY");
 
     public static final IElementType KEYWORD_BLOCK = new BemHtmlElementType("KEYWORD_BLOCK");
     public static final IElementType KEYWORD_ELEM = new BemHtmlElementType("KEYWORD_ELEM");
