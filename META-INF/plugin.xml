@@ -4,6 +4,9 @@
     <version>1.0.4</version>
     <vendor url="https://github.com/afelix/bemidea-bemhtml">BEM</vendor>
     <change-notes><![CDATA[
+    <h3>1.0.4</h3><ul>
+        <li>Bug: Needless folding of embedded JS, <a href="https://github.com/afelix/bemidea-bemhtml/issues/7">issues/7</a>.</li>
+        </ul>
     <h3>1.0.3</h3><ul>
         <li>Temporary hack: hide file reload exception on plugin startup.</li>
         <li>Custom parser instead of JFlex. It was a pain to use JFlex 'look-ahead'.</li>

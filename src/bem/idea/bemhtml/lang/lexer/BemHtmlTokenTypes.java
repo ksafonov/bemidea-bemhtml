@@ -34,4 +34,11 @@ public interface BemHtmlTokenTypes {
 
     public static final IElementType JAVASCRIPT_CODE = new BemHtmlElementType("JAVASCRIPT_CODE");
 
+    public static final IElementType FIRST_JAVASCRIPT_CODE = new BemHtmlElementType("JAVASCRIPT_CODE");
+    public static final IElementType LAST_JAVASCRIPT_CODE = new BemHtmlElementType("JAVASCRIPT_CODE");
+    public static final IElementType SINGLE_JAVASCRIPT_CODE = new BemHtmlElementType("JAVASCRIPT_CODE");
+    public static final IElementType FIRST_JS_EXPRESSION = new BemHtmlElementType("JS_EXPRESSION");
+    public static final IElementType LAST_JS_EXPRESSION = new BemHtmlElementType("JS_EXPRESSION");
+    public static final IElementType SINGLE_JS_EXPRESSION = new BemHtmlElementType("JS_EXPRESSION");
+
 }

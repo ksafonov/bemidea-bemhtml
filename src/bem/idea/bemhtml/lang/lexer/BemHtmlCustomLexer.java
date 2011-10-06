@@ -24,6 +24,42 @@ public class BemHtmlCustomLexer {
         tokenize();
         tokens = retokenize();
         validate();
+        setFirstLastJS();
+    }
+
+    private void setFirstLastJS() {
+        BHToken t;
+        BHTokenType tt;
+        int i, l = tokens.size();
+        for (i = 0; i < l; i++) {
+            t = tokens.get(i);
+            tt = t.getType();
+            if (tt == BHTokenType.JS_EXPRESSION) {
+                t.setType(BHTokenType.FIRST_JS_EXPRESSION);
+                break;
+            } else if (tt == BHTokenType.JAVASCRIPT) {
+                t.setType(BHTokenType.FIRST_JAVASCRIPT);
+                break;
+            }
+        }
+        for (i = l - 1; i > -1; i--) {
+            t = tokens.get(i);
+            tt = t.getType();
+            if (tt == BHTokenType.JS_EXPRESSION) {
+                t.setType(BHTokenType.LAST_JS_EXPRESSION);
+                break;
+            } else if (tt == BHTokenType.JAVASCRIPT) {
+                t.setType(BHTokenType.LAST_JAVASCRIPT);
+                break;
+            } else if (tt == BHTokenType.FIRST_JS_EXPRESSION) {
+                t.setType(BHTokenType.SINGLE_JS_EXPRESSION);
+                break;
+            } else if (tt == BHTokenType.FIRST_JAVASCRIPT) {
+                t.setType(BHTokenType.SINGLE_JAVASCRIPT);
+                break;
+            }
+        }
+
     }
 
     public void next() {
@@ -249,7 +285,13 @@ public class BemHtmlCustomLexer {
         types.put(BHTokenType.WHITESPACE, BemHtmlTokenTypes.WHITE_SPACE);
         types.put(BHTokenType.NEWLINE, BemHtmlTokenTypes.WHITE_SPACE);
         types.put(BHTokenType.JAVASCRIPT, BemHtmlTokenTypes.JAVASCRIPT_CODE);
+        types.put(BHTokenType.SINGLE_JAVASCRIPT, BemHtmlTokenTypes.SINGLE_JAVASCRIPT_CODE);
+        types.put(BHTokenType.FIRST_JAVASCRIPT, BemHtmlTokenTypes.FIRST_JAVASCRIPT_CODE);
+        types.put(BHTokenType.LAST_JAVASCRIPT, BemHtmlTokenTypes.LAST_JAVASCRIPT_CODE);
         types.put(BHTokenType.JS_EXPRESSION, BemHtmlTokenTypes.JS_EXPRESSION);
+        types.put(BHTokenType.SINGLE_JS_EXPRESSION, BemHtmlTokenTypes.SINGLE_JS_EXPRESSION);
+        types.put(BHTokenType.FIRST_JS_EXPRESSION, BemHtmlTokenTypes.FIRST_JS_EXPRESSION);
+        types.put(BHTokenType.LAST_JS_EXPRESSION, BemHtmlTokenTypes.LAST_JS_EXPRESSION);
         types.put(BHTokenType.BH_JSONPROP, BemHtmlTokenTypes.JSON_PROPERTY);
     }
 
@@ -543,11 +585,17 @@ public class BemHtmlCustomLexer {
         NEWLINE,
         OPERATOR,
         JAVASCRIPT,
+        SINGLE_JAVASCRIPT,
+        FIRST_JAVASCRIPT,
+        LAST_JAVASCRIPT,
         ERROR,
 
         BH_JSONPROP,
         BEM_VALUE,
         JS_EXPRESSION,
+        SINGLE_JS_EXPRESSION,
+        FIRST_JS_EXPRESSION,
+        LAST_JS_EXPRESSION,
 
         BH_BLOCK,
         BH_ELEM,

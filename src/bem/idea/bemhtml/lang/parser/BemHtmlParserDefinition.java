@@ -1,11 +1,9 @@
 package bem.idea.bemhtml.lang.parser;
 
 import bem.idea.bemhtml.file.BemHtmlFileType;
-import bem.idea.bemhtml.lang.lexer.BemHtmlFlexLexer;
 import bem.idea.bemhtml.lang.lexer.BemHtmlParsingLexer;
 import bem.idea.bemhtml.lang.lexer.BemHtmlTokenSets;
 import bem.idea.bemhtml.lang.lexer.BemHtmlTokenTypes;
-import bem.idea.bemhtml.lang.psi.BemHtmlAsgnExpr;
 import bem.idea.bemhtml.lang.psi.impl.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
@@ -55,8 +53,20 @@ public class BemHtmlParserDefinition implements ParserDefinition {
     public PsiElement createElement(ASTNode node) {
         if (node.getElementType() == BemHtmlTokenTypes.JAVASCRIPT_CODE) {
             return new BemHtmlJavaScriptCodeImpl(node);
+        } else if (node.getElementType() == BemHtmlTokenTypes.SINGLE_JAVASCRIPT_CODE) {
+                return new BemHtmlJavaScriptCodeImpl(node, true, true);
+        } else if (node.getElementType() == BemHtmlTokenTypes.FIRST_JAVASCRIPT_CODE) {
+                return new BemHtmlJavaScriptCodeImpl(node, true, false);
+        } else if (node.getElementType() == BemHtmlTokenTypes.LAST_JAVASCRIPT_CODE) {
+                return new BemHtmlJavaScriptCodeImpl(node, false, true);
         } else if (node.getElementType() == BemHtmlTokenTypes.JS_EXPRESSION) {
             return new BemHtmlAsgnExprImpl(node);
+        } else if (node.getElementType() == BemHtmlTokenTypes.SINGLE_JS_EXPRESSION) {
+            return new BemHtmlAsgnExprImpl(node, true, true);
+        } else if (node.getElementType() == BemHtmlTokenTypes.FIRST_JS_EXPRESSION) {
+            return new BemHtmlAsgnExprImpl(node, true, false);
+        } else if (node.getElementType() == BemHtmlTokenTypes.LAST_JS_EXPRESSION) {
+            return new BemHtmlAsgnExprImpl(node, false, true);
         } else if (node.getElementType() == BemHtmlTokenTypes.BEM_VALUE) {
             return new BemHtmlBemValueImpl(node);
         }
