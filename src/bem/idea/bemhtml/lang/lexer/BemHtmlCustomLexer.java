@@ -295,45 +295,45 @@ public class BemHtmlCustomLexer {
                     if (bemKwd1.containsKey(v)) t.setType(bemKwd1.get(v));
                     else t.setType(BHTokenType.BH_JSONPROP);
                     _tokens.add(t);
-                } else if (nt != null && ntt == BHTokenType.WHITESPACE && bemKwd0.containsKey(v)) {
+                } else if (bemKwd0.containsKey(v)) {
                     t.setType(bemKwd0.get(v));
                     _tokens.add(t);
-                    _tokens.add(nt);
-                    x = getJSExpression(j + 1);
-                    if (x > j) {
-                        t0 = tokens.get(j + 1);
-                        t1 = tokens.get(x);
-                        bvt = src.substring(t0.getStart(), t1.getEnd() + 1).matches("^[\\w\\-]+$") ?
-                                BHTokenType.BEM_VALUE : BHTokenType.JS_EXPRESSION;
-                        if (t0 != t1) {
-                            _tokens.add(new BHToken(bvt, t0.getStart(), t1.getEnd()));
-                        } else {
-                            t0.setType(bvt);
-                            _tokens.add(t0);
-                        }
-                        i = x;
-                        j = x + 1;
-                        if (j < l && (v.equals("mod") || v.equals("elemMod"))) {
-                            nt = tokens.get(j); ntt = nt.getType();
-                            if (ntt == BHTokenType.WHITESPACE) {
-                                _tokens.add(nt);
-                                x = getJSExpression(j + 1);
-                                if (x > j) {
-                                    t0 = tokens.get(j + 1);
-                                    t1 = tokens.get(x);
-                                    bvt = src.substring(t0.getStart(), t1.getEnd() + 1).matches("^[\\w\\-]+$") ?
-                                            BHTokenType.BEM_VALUE : BHTokenType.JS_EXPRESSION;
-                                    if (t0 != t1) {
-                                        _tokens.add(new BHToken(bvt, t0.getStart(), t1.getEnd()));
-                                    } else {
-                                        t0.setType(bvt);
-                                        _tokens.add(t0);
-                                    }
-                                    i = x;
-                                } else i++;
+                    if (nt != null && ntt == BHTokenType.WHITESPACE) {
+                        _tokens.add(nt);
+                        x = getJSExpression(j + 1);
+                        if (x > j) {
+                            t0 = tokens.get(j + 1);
+                            t1 = tokens.get(x);
+                            bvt = src.substring(t0.getStart(), t1.getEnd() + 1).matches("^[\\w\\-]+$") ? BHTokenType.BEM_VALUE : BHTokenType.JS_EXPRESSION;
+                            if (t0 != t1) {
+                                _tokens.add(new BHToken(bvt, t0.getStart(), t1.getEnd()));
+                            } else {
+                                t0.setType(bvt);
+                                _tokens.add(t0);
                             }
-                        }
-                    } else i++;
+                            i = x;
+                            j = x + 1;
+                            if (j < l && (v.equals("mod") || v.equals("elemMod"))) {
+                                nt = tokens.get(j); ntt = nt.getType();
+                                if (ntt == BHTokenType.WHITESPACE) {
+                                    _tokens.add(nt);
+                                    x = getJSExpression(j + 1);
+                                    if (x > j) {
+                                        t0 = tokens.get(j + 1);
+                                        t1 = tokens.get(x);
+                                        bvt = src.substring(t0.getStart(), t1.getEnd() + 1).matches("^[\\w\\-]+$") ? BHTokenType.BEM_VALUE : BHTokenType.JS_EXPRESSION;
+                                        if (t0 != t1) {
+                                            _tokens.add(new BHToken(bvt, t0.getStart(), t1.getEnd()));
+                                        } else {
+                                            t0.setType(bvt);
+                                            _tokens.add(t0);
+                                        }
+                                        i = x;
+                                    } else i++;
+                                }
+                            }
+                        } else i++;
+                    }
                 } else if (bemKwd1.containsKey(v)) {
                     t.setType(bemKwd1.get(v));
                     _tokens.add(t);
@@ -371,18 +371,59 @@ public class BemHtmlCustomLexer {
     }
 
     private void validate() {
-        BHToken t;
+        BHToken t, st;
         BHTokenType tt;
+        List<BHToken> sub;
+        int x;
         for (int i = 0, l = tokens.size(); i < l; i++) {
             t = tokens.get(i);
             tt = t.getType();
             if (t.isInvalid() ||
-                tt == BHTokenType.OPERATOR ||
-                tt == BHTokenType.SEMICOLON ||
-                tt == BHTokenType.DOT ||
-                tt == BHTokenType.STRING ||
-                tt == BHTokenType.IFQ) t.setType(BHTokenType.ERROR);
+                    tt == BHTokenType.OPERATOR ||
+                    tt == BHTokenType.SEMICOLON ||
+                    tt == BHTokenType.DOT ||
+                    tt == BHTokenType.STRING ||
+                    tt == BHTokenType.IFQ) {
+                t.setType(BHTokenType.ERROR);
+            } else if (tt == BHTokenType.BH_BLOCK || tt == BHTokenType.BH_ELEM) {
+                if (i + 2 < l) {
+                    sub = tokens.subList(i + 1, i + 3);
+                    if ((st = sub.get(0)).getType() != BHTokenType.WHITESPACE) st.invalidate();
+                    if ((st = sub.get(1)).getType() != BHTokenType.BEM_VALUE &&
+                            st.getType() != BHTokenType.JS_EXPRESSION) st.invalidate();
+                }
+            } else if (tt == BHTokenType.BH_MOD || tt == BHTokenType.BH_ELEMMOD) {
+                if (i + 4 < l) {
+                    sub = tokens.subList(i + 1, i + 5);
+                    if ((st = sub.get(0)).getType() != BHTokenType.WHITESPACE) st.invalidate();
+                    if ((st = sub.get(1)).getType() != BHTokenType.BEM_VALUE &&
+                            st.getType() != BHTokenType.JS_EXPRESSION) st.invalidate();
+                    if ((st = sub.get(2)).getType() != BHTokenType.WHITESPACE) st.invalidate();
+                    if ((st = sub.get(3)).getType() != BHTokenType.BEM_VALUE &&
+                            st.getType() != BHTokenType.JS_EXPRESSION) st.invalidate();
+                }
+            } else if (tt == BHTokenType.COLON) {
+                if (i + 1 < l) {
+                    if ((x = isValidJSONValue(i + 1)) != -1) {
+                        tokens.get(x).invalidate();
+                    }
+                }
+            }
         }
+    }
+
+    private int isValidJSONValue(int i) {
+        BHTokenType tt;
+        for (int l = tokens.size(); i < l; i++) {
+            tt = tokens.get(i).getType();
+            if (tt != BHTokenType.WHITESPACE && tt != BHTokenType.NEWLINE) {
+                if (tt != BHTokenType.JS_EXPRESSION &&
+                        tt != BHTokenType.L_BBRACE &&
+                        tt != BHTokenType.JAVASCRIPT) return i;
+                else return -1;
+            }
+        }
+        return -1;
     }
 
     private int addJSExpression(int i, List<BHToken> _tokens) {
