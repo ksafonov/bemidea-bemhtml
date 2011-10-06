@@ -108,7 +108,7 @@ public class BemHtmlCustomLexer {
                 if (c == '"' || c == '\'') {
                     x = findStringEnd(src, c, i + 1);
                     if (x == -1) {
-                        toAdd = new BHToken(BHTokenType.ERROR, i, l - i);
+                        toAdd = new BHToken(BHTokenType.ERROR, i, l - 1);
                         i = l - 1;
                     } else {
                         toAdd = new BHToken(BHTokenType.STRING, i, x);
