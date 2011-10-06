@@ -6,6 +6,9 @@
     <change-notes><![CDATA[
     <h3>1.0.3</h3><ul>
         <li>Temporary hack: hide file reload exception on plugin startup.</li>
+        <li>Custom parser instead of JFlex. It was a pain to use JFlex 'look-ahead'.</li>
+        <li>BEMJSON fix: correct recognition of properties' names.</li>
+        <li>Some validation added.</li>
         </ul>
     <h3>1.0.2</h3><ul>
         <li>Basic structure view.</li>
