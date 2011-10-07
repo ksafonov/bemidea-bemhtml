@@ -485,7 +485,7 @@ public class BemHtmlCustomLexer {
     }
 
     private int getJSExpression(int i) {
-        int l = tokens.size();
+        int l = tokens.size(), x;
         if (i < l) {
             BHToken t;
             BHTokenType tt, ltt = null;
@@ -524,6 +524,10 @@ public class BemHtmlCustomLexer {
                             break;
                         case COLON:
                             if (!ifQMode) return i - (wasWhite ? 2 : 1);
+                            if ((x = getJSExpression(i + 1)) != -1) {
+                                i = x;
+                                tt = tokens.get(i).getType();
+                            }
                             ifQMode = false;
                             break;
                         case SEMICOLON:
