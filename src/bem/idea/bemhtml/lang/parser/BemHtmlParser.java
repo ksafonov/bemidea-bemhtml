@@ -24,17 +24,11 @@ public class BemHtmlParser implements PsiParser {
     private void parse(PsiBuilder builder) {
         IElementType first = builder.getTokenType();
         if (first == BemHtmlTokenTypes.JAVASCRIPT_CODE ||
-                first == BemHtmlTokenTypes.FIRST_JAVASCRIPT_CODE ||
-                first == BemHtmlTokenTypes.LAST_JAVASCRIPT_CODE ||
-                first == BemHtmlTokenTypes.SINGLE_JAVASCRIPT_CODE ||
                 first == BemHtmlTokenTypes.KEYWORDS_VALUE ||
                 first == BemHtmlTokenTypes.KEYWORDS_DELIM ||
                 first == BemHtmlTokenTypes.KEYWORDS_COLON ||
                 first == BemHtmlTokenTypes.BEM_VALUE ||
                 first == BemHtmlTokenTypes.JS_EXPRESSION ||
-                first == BemHtmlTokenTypes.FIRST_JS_EXPRESSION ||
-                first == BemHtmlTokenTypes.LAST_JS_EXPRESSION ||
-                first == BemHtmlTokenTypes.SINGLE_JS_EXPRESSION ||
                 first == BemHtmlTokenTypes.JSON_PROPERTY ||
                 first == BemHtmlTokenTypes.WHITE_SPACE ||
                 first == BemHtmlTokenTypes.KEYWORD_ATTRS ||
