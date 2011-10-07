@@ -54,6 +54,7 @@
         <lang.fileViewProviderFactory language="BemHtml" implementationClass="bem.idea.bemhtml.file.BemHtmlFileViewProviderFactory"/>
         <lang.psiStructureViewFactory  language="BemHtml" implementationClass="bem.idea.bemhtml.structure.BemHtmlStructureViewBuilderFactory"/>
         <colorSettingsPage implementation="bem.idea.bemhtml.highlighter.BemHtmlColorSettingsPage"/>
+        <fileTypeFactory implementation="bem.idea.bemhtml.file.BemHtmlFileTypeFactory"/>
     </extensions>
 
 </idea-plugin>

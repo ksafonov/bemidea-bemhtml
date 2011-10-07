@@ -1,12 +1,12 @@
 package bem.idea.bemhtml;
 
 import bem.idea.bemhtml.file.BemHtmlFileType;
+import com.intellij.AppTopics;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileDocumentManagerListener;
-import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,16 +18,7 @@ public class BemHtmlLoader implements ApplicationComponent, FileDocumentManagerL
     private final static Set<String> touchedFiles = new HashSet<String>();
 
     public void initComponent() {
-        FileDocumentManager.getInstance().addFileDocumentManagerListener(this);
-        ApplicationManager.getApplication().runWriteAction(
-                new Runnable() {
-                    public void run() {
-                        FileTypeManager.getInstance().registerFileType(
-                                BemHtmlFileType.BEMHTML_FILE_TYPE,
-                                BemHtmlFileType.DEFAULT_EXTENSION);
-                    }
-                }
-        );
+        ApplicationManager.getApplication().getMessageBus().connect().subscribe(AppTopics.FILE_DOCUMENT_SYNC, this);
     }
 
     public void disposeComponent() {}
