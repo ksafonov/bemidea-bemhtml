@@ -24,7 +24,7 @@ public class BemHtmlCustomLexer {
         tokenize();
         tokens = retokenize();
         validate();
-        setFirstLastJS();
+//        setFirstLastJS();
     }
 
     private void setFirstLastJS() {
