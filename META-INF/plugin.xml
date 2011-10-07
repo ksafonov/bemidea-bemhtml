@@ -38,9 +38,6 @@
 
     <project-components>
         <component>
-            <implementation-class>bem.idea.bemhtml.lang.injection.BemHtmlJavaScriptInjectionComponent</implementation-class>
-        </component>
-        <component>
             <implementation-class>bem.idea.bemhtml.BemHtmlProjectComponent</implementation-class>
         </component>
     </project-components>
@@ -55,6 +52,7 @@
         <lang.psiStructureViewFactory  language="BemHtml" implementationClass="bem.idea.bemhtml.structure.BemHtmlStructureViewBuilderFactory"/>
         <colorSettingsPage implementation="bem.idea.bemhtml.highlighter.BemHtmlColorSettingsPage"/>
         <fileTypeFactory implementation="bem.idea.bemhtml.file.BemHtmlFileTypeFactory"/>
+        <languageInjector implementation="bem.idea.bemhtml.lang.injection.BemHtmlJavaScriptInjector"/>
     </extensions>
 
 </idea-plugin>
