@@ -32,6 +32,8 @@ public class BemHtmlAnnotator extends PsiElementVisitor implements Annotator {
             myHolder.createErrorAnnotation(element, "One BEM value / JavaScript expression expected");
         } else if (element.getNode().getElementType() == ERROR_TWO_BEM_VALUES_EXPECTED) {
             myHolder.createErrorAnnotation(element, "Two BEM values / JavaScript expressions expected");
+        } else if (element.getNode().getElementType() == ERROR_UNEXPECTED_CHARACTER) {
+            myHolder.createErrorAnnotation(element, "Unexpected character");
         }
     }
 }

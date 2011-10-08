@@ -36,6 +36,7 @@ public class BemHtmlParser implements PsiParser {
                 first == ERROR_ONE_BEM_VALUE_EXPECTED ||
                 first == ERROR_TWO_BEM_VALUES_EXPECTED ||
                 first == ERROR_WHITESPACE_EXPECTED ||
+                first == ERROR_UNEXPECTED_CHARACTER ||
                 first == KEYWORD_ATTRS ||
                 first == KEYWORD_BEM ||
                 first == KEYWORD_BLOCK ||

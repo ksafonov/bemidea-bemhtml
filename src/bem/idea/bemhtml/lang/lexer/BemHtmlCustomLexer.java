@@ -244,6 +244,7 @@ public class BemHtmlCustomLexer {
         types.put(BHTokenType.ERROR_WHITESPACE_EXPECTED, BemHtmlTokenTypes.ERROR_WHITESPACE_EXPECTED);
         types.put(BHTokenType.ERROR_ONE_BEM_VALUE_EXPECTED, BemHtmlTokenTypes.ERROR_ONE_BEM_VALUE_EXPECTED);
         types.put(BHTokenType.ERROR_TWO_BEM_VALUES_EXPECTED, BemHtmlTokenTypes.ERROR_TWO_BEM_VALUES_EXPECTED);
+        types.put(BHTokenType.ERROR_UNEXPECTED_CHARACTER, BemHtmlTokenTypes.ERROR_UNEXPECTED_CHARACTER);
 
         types.put(BHTokenType.COLON, BemHtmlTokenTypes.KEYWORDS_COLON);
         types.put(BHTokenType.COMMA, BemHtmlTokenTypes.KEYWORDS_DELIM);
@@ -394,9 +395,9 @@ public class BemHtmlCustomLexer {
             if (tt == BHTokenType.OPERATOR ||
                     tt == BHTokenType.SEMICOLON ||
                     tt == BHTokenType.DOT ||
-                    tt == BHTokenType.STRING ||
+                    //tt == BHTokenType.STRING ||
                     tt == BHTokenType.IFQ) {
-                t.setType(BHTokenType.ERROR);
+                t.setType(BHTokenType.ERROR_UNEXPECTED_CHARACTER);
             } else if (tt == BHTokenType.BH_BLOCK || tt == BHTokenType.BH_ELEM) {
                 if (i + 2 < l) {
                     sub = tokens.subList(i + 1, i + 3);
@@ -603,6 +604,7 @@ public class BemHtmlCustomLexer {
         ERROR_ONE_BEM_VALUE_EXPECTED,
         ERROR_TWO_BEM_VALUES_EXPECTED,
         ERROR_WHITESPACE_EXPECTED,
+        ERROR_UNEXPECTED_CHARACTER,
 
         BH_JSONPROP,
         BEM_VALUE,
