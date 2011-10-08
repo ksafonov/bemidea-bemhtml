@@ -9,8 +9,4 @@ public class BemHtmlAsgnExprImpl extends BemHtmlBaseJSElementImpl implements Bem
         super(node);
     }
 
-    public BemHtmlAsgnExprImpl(ASTNode node, boolean firstJs, boolean lastJs) {
-        super(node, firstJs, lastJs);
-    }
-
 }

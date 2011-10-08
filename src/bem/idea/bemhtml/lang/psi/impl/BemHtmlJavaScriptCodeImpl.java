@@ -9,8 +9,4 @@ public class BemHtmlJavaScriptCodeImpl extends BemHtmlBaseJSElementImpl implemen
         super(node);
     }
 
-    public BemHtmlJavaScriptCodeImpl(ASTNode node, boolean firstJs, boolean lastJs) {
-        super(node, firstJs, lastJs);
-    }
-
 }

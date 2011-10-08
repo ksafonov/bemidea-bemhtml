@@ -1,6 +1,5 @@
 package bem.idea.bemhtml.lang.psi.impl;
 
-import bem.idea.bemhtml.lang.psi.BemHtmlFirstLastElement;
 import com.intellij.lang.ASTNode;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
@@ -14,27 +13,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class BemHtmlBaseJSElementImpl extends BemHtmlElementImpl implements PsiLanguageInjectionHost, BemHtmlFirstLastElement {
-
-    private boolean firstJs = false;
-    private boolean lastJs = false;
+public class BemHtmlBaseJSElementImpl extends BemHtmlElementImpl implements PsiLanguageInjectionHost {
 
     public BemHtmlBaseJSElementImpl(ASTNode node) {
         super(node);
-    }
-
-    public BemHtmlBaseJSElementImpl(ASTNode node, boolean firstJs, boolean lastJs) {
-        this(node);
-        this.firstJs = firstJs;
-        this.lastJs = lastJs;
-    }
-
-    public boolean isFirstJs() {
-        return firstJs;
-    }
-
-    public boolean isLastJs() {
-        return lastJs;
     }
 
     public List<Pair<PsiElement, TextRange>> getInjectedPsi() {

@@ -26,7 +26,7 @@ public class BemHtmlColorSettingsPage implements ColorSettingsPage {
 
     @NotNull
     public String getDisplayName() {
-        return "BemHtml";
+        return "BEMHTML";
     }
 
     public Icon getIcon() {

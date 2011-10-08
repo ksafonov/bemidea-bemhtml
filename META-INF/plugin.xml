@@ -51,14 +51,14 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
-        <lang.parserDefinition language="BemHtml" implementationClass="bem.idea.bemhtml.lang.parser.BemHtmlParserDefinition"/>
-        <lang.braceMatcher language="BemHtml" implementationClass="bem.idea.bemhtml.file.BemHtmlBraceMatcher"/>
-        <lang.fileViewProviderFactory language="BemHtml" implementationClass="bem.idea.bemhtml.file.BemHtmlFileViewProviderFactory"/>
-        <lang.psiStructureViewFactory  language="BemHtml" implementationClass="bem.idea.bemhtml.structure.BemHtmlStructureViewBuilderFactory"/>
+        <lang.parserDefinition language="BEMHTML" implementationClass="bem.idea.bemhtml.lang.parser.BemHtmlParserDefinition"/>
+        <lang.braceMatcher language="BEMHTML" implementationClass="bem.idea.bemhtml.file.BemHtmlBraceMatcher"/>
+        <lang.fileViewProviderFactory language="BEMHTML" implementationClass="bem.idea.bemhtml.file.BemHtmlFileViewProviderFactory"/>
+        <lang.psiStructureViewFactory  language="BEMHTML" implementationClass="bem.idea.bemhtml.structure.BemHtmlStructureViewBuilderFactory"/>
         <colorSettingsPage implementation="bem.idea.bemhtml.highlighter.BemHtmlColorSettingsPage"/>
         <fileTypeFactory implementation="bem.idea.bemhtml.file.BemHtmlFileTypeFactory"/>
         <languageInjector implementation="bem.idea.bemhtml.lang.injection.BemHtmlJavaScriptInjector"/>
-        <annotator language="BemHtml" implementationClass="bem.idea.bemhtml.validation.BemHtmlAnnotator"/>
+        <annotator language="BEMHTML" implementationClass="bem.idea.bemhtml.validation.BemHtmlAnnotator"/>
     </extensions>
 
 </idea-plugin>

@@ -22,12 +22,12 @@ public class BemHtmlFileType extends LanguageFileType {
 
     @NotNull
     public String getName() {
-        return "BemHtml";
+        return "BEMHTML";
     }
 
     @NotNull
     public String getDescription() {
-        return "BemHtml Files";
+        return "BEMHTML Files";
     }
 
     @NotNull

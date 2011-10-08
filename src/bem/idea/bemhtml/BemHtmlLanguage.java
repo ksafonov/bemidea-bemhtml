@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 public class BemHtmlLanguage extends Language {
 
     public BemHtmlLanguage() {
-        super("BemHtml", "text/bemhtml");
+        super("BEMHTML", "text/bemhtml");
         SyntaxHighlighterFactory.LANGUAGE_FACTORY.addExplicitExtension(this, new SingleLazyInstanceSyntaxHighlighterFactory() {
             @NotNull
             protected SyntaxHighlighter createHighlighter() {
