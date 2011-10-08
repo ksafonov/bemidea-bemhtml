@@ -14,24 +14,13 @@ import java.util.Map;
 public class BemHtmlColorSettingsPage implements ColorSettingsPage {
 
     private static final AttributesDescriptor[] ATTRS = new AttributesDescriptor[] {
-            new AttributesDescriptor("Error", BemHtmlSyntaxHighlighter.BAD_CHARACTER),
-            new AttributesDescriptor("Keyword: block", BemHtmlSyntaxHighlighter.KEYWORD_BLOCK),
-            new AttributesDescriptor("Keyword: elem", BemHtmlSyntaxHighlighter.KEYWORD_ELEM),
-            new AttributesDescriptor("Keyword: mod", BemHtmlSyntaxHighlighter.KEYWORD_MOD),
-            new AttributesDescriptor("Keyword: elemMod", BemHtmlSyntaxHighlighter.KEYWORD_ELEMMOD),
-            new AttributesDescriptor("Keyword: default", BemHtmlSyntaxHighlighter.KEYWORD_DEFAULT),
-            new AttributesDescriptor("Keyword: tag", BemHtmlSyntaxHighlighter.KEYWORD_TAG),
-            new AttributesDescriptor("Keyword: attrs", BemHtmlSyntaxHighlighter.KEYWORD_ATTRS),
-            new AttributesDescriptor("Keyword: cls", BemHtmlSyntaxHighlighter.KEYWORD_CLS),
-            new AttributesDescriptor("Keyword: bem", BemHtmlSyntaxHighlighter.KEYWORD_BEM),
-            new AttributesDescriptor("Keyword: js", BemHtmlSyntaxHighlighter.KEYWORD_JS),
-            new AttributesDescriptor("Keyword: jsAttr", BemHtmlSyntaxHighlighter.KEYWORD_JSATTR),
-            new AttributesDescriptor("Keyword: mix", BemHtmlSyntaxHighlighter.KEYWORD_MIX),
-            new AttributesDescriptor("Keyword: content", BemHtmlSyntaxHighlighter.KEYWORD_CONTENT),
-            new AttributesDescriptor("Keywords delim", BemHtmlSyntaxHighlighter.KEYWORDS_DELIM),
-            new AttributesDescriptor("Keywords colon", BemHtmlSyntaxHighlighter.KEYWORDS_COLON),
+            new AttributesDescriptor("Entity keyword", BemHtmlSyntaxHighlighter.KEYWORD_ENTITY),
+            new AttributesDescriptor("Mod keyword", BemHtmlSyntaxHighlighter.KEYWORD_MOD),
             new AttributesDescriptor("BEM value", BemHtmlSyntaxHighlighter.BEM_VALUE),
-            new AttributesDescriptor("Braces", BemHtmlSyntaxHighlighter.BRACES)
+            new AttributesDescriptor("Delim", BemHtmlSyntaxHighlighter.KEYWORDS_DELIM),
+            new AttributesDescriptor("Colon", BemHtmlSyntaxHighlighter.KEYWORDS_COLON),
+            new AttributesDescriptor("Braces", BemHtmlSyntaxHighlighter.BRACES),
+            new AttributesDescriptor("Error", BemHtmlSyntaxHighlighter.BAD_CHARACTER)
     };
 
     @NotNull
