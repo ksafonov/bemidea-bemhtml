@@ -2,10 +2,7 @@ package bem.idea.bemhtml.lang.lexer;
 
 import com.intellij.psi.tree.IElementType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BemHtmlCustomLexer {
 
@@ -205,6 +202,9 @@ public class BemHtmlCustomLexer {
     private static Map<String, BHTokenType> bemKwd0;
     private static Map<String, BHTokenType> bemKwd1;
     private static Map<BHTokenType, IElementType> types;
+    private static Set<BHTokenType> invalidateBemValueSet;
+
+
     static {
         bemKwd0 = new HashMap<String, BHTokenType>();
         bemKwd0.put("block", BHTokenType.BH_BLOCK);
@@ -251,6 +251,12 @@ public class BemHtmlCustomLexer {
         types.put(BHTokenType.JAVASCRIPT, BemHtmlTokenTypes.JAVASCRIPT_CODE);
         types.put(BHTokenType.JS_EXPRESSION, BemHtmlTokenTypes.JS_EXPRESSION);
         types.put(BHTokenType.BH_JSONPROP, BemHtmlTokenTypes.JSON_PROPERTY);
+
+        invalidateBemValueSet = new HashSet<BHTokenType>();
+        invalidateBemValueSet.add(BHTokenType.COLON);
+        invalidateBemValueSet.add(BHTokenType.COMMA);
+        invalidateBemValueSet.add(BHTokenType.NEWLINE);
+        invalidateBemValueSet.add(BHTokenType.L_BBRACE);
     }
 
     private List<BHToken> retokenize() {
@@ -374,8 +380,10 @@ public class BemHtmlCustomLexer {
         BHToken t, st;
         BHTokenType tt;
         List<BHToken> sub;
+        boolean valid;
         int x;
         for (int i = 0, l = tokens.size(); i < l; i++) {
+            valid = true;
             t = tokens.get(i);
             tt = t.getType();
             if (t.isInvalid() ||
@@ -388,19 +396,29 @@ public class BemHtmlCustomLexer {
             } else if (tt == BHTokenType.BH_BLOCK || tt == BHTokenType.BH_ELEM) {
                 if (i + 2 < l) {
                     sub = tokens.subList(i + 1, i + 3);
-                    if ((st = sub.get(0)).getType() != BHTokenType.WHITESPACE) st.invalidate();
+
+                    if ((st = sub.get(0)).getType() != BHTokenType.WHITESPACE) { st.invalidate(); valid = false; }
                     if ((st = sub.get(1)).getType() != BHTokenType.BEM_VALUE &&
-                            st.getType() != BHTokenType.JS_EXPRESSION) st.invalidate();
+                            st.getType() != BHTokenType.JS_EXPRESSION) { st.invalidate(); valid = false; }
+
+                    if (valid) {
+                        if ((x = invalidateTill(i + 3, invalidateBemValueSet)) != 0) i += x;
+                    }
                 }
             } else if (tt == BHTokenType.BH_MOD || tt == BHTokenType.BH_ELEMMOD) {
                 if (i + 4 < l) {
                     sub = tokens.subList(i + 1, i + 5);
-                    if ((st = sub.get(0)).getType() != BHTokenType.WHITESPACE) st.invalidate();
+
+                    if ((st = sub.get(0)).getType() != BHTokenType.WHITESPACE) { st.invalidate(); valid = false; }
                     if ((st = sub.get(1)).getType() != BHTokenType.BEM_VALUE &&
-                            st.getType() != BHTokenType.JS_EXPRESSION) st.invalidate();
-                    if ((st = sub.get(2)).getType() != BHTokenType.WHITESPACE) st.invalidate();
+                            st.getType() != BHTokenType.JS_EXPRESSION) { st.invalidate(); valid = false; }
+                    if ((st = sub.get(2)).getType() != BHTokenType.WHITESPACE) { st.invalidate(); valid = false; }
                     if ((st = sub.get(3)).getType() != BHTokenType.BEM_VALUE &&
-                            st.getType() != BHTokenType.JS_EXPRESSION) st.invalidate();
+                            st.getType() != BHTokenType.JS_EXPRESSION) { st.invalidate(); valid = false; }
+
+                    if (valid) {
+                        if ((x = invalidateTill(i + 5, invalidateBemValueSet)) != 0) i += x;
+                    }
                 }
             } else if (tt == BHTokenType.COLON) {
                 if (i + 1 < l) {
@@ -410,6 +428,23 @@ public class BemHtmlCustomLexer {
                 }
             }
         }
+    }
+
+    private int invalidateTill(int i, Set<BHTokenType> tillSet) {
+        BHToken t;
+        BHTokenType tt;
+        int n = 0;
+        for (int l = tokens.size(); i < l; i++, n++) {
+            t = tokens.get(i);
+            tt = t.getType();
+            if (tt != BHTokenType.WHITESPACE) {
+                if (!tillSet.contains(tt)) {
+                    t.invalidate();
+                    t.setType(BHTokenType.ERROR);
+                } else return n;
+            }
+        }
+        return n;
     }
 
     private int isValidJSONValue(int i) {
