@@ -6,6 +6,7 @@ public interface BemHtmlTokenTypes {
 
     public static final IElementType WHITE_SPACE = new BemHtmlElementType("WHITE_SPACE");
     public static final IElementType BAD_CHARACTER = new BemHtmlElementType("BAD_CHARACTER");
+    public static final IElementType ERROR_NEEDLESS_BEM_VALUE = new BemHtmlElementType("ERROR_NEEDLESS_BEM_VALUE");
 
     public static final IElementType KEYWORDS_DELIM = new BemHtmlElementType("KEYWORDS_DELIM");
     public static final IElementType KEYWORDS_COLON = new BemHtmlElementType("KEYWORDS_COLON");

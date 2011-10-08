@@ -2,10 +2,7 @@ package bem.idea.bemhtml.lang.lexer;
 
 import com.intellij.psi.tree.IElementType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BemHtmlCustomLexer {
 
@@ -162,7 +159,7 @@ public class BemHtmlCustomLexer {
                 } else if (bDelayR) {
                     bs = bBraces.size();
                     lub = findLastUnmatchedBrace(bBraces);
-                    if (bs == 0 || lub == null) toAdd.invalidate();
+                    if (bs == 0 || lub == null) toAdd.invalidate(BHTokenType.ERROR);
                     else {
                         lub.setR(ts - 1);
                         bBracesIdx.put(lub.getL(), lub.getR());
@@ -205,6 +202,9 @@ public class BemHtmlCustomLexer {
     private static Map<String, BHTokenType> bemKwd0;
     private static Map<String, BHTokenType> bemKwd1;
     private static Map<BHTokenType, IElementType> types;
+    private static Set<BHTokenType> invalidateBemValueSet;
+
+
     static {
         bemKwd0 = new HashMap<String, BHTokenType>();
         bemKwd0.put("block", BHTokenType.BH_BLOCK);
@@ -241,6 +241,7 @@ public class BemHtmlCustomLexer {
         types.put(BHTokenType.BH_CONTENT, BemHtmlTokenTypes.KEYWORD_CONTENT);
 
         types.put(BHTokenType.ERROR, BemHtmlTokenTypes.BAD_CHARACTER);
+        types.put(BHTokenType.ERROR_NEEDLESS_BEM_VALUE, BemHtmlTokenTypes.ERROR_NEEDLESS_BEM_VALUE);
         types.put(BHTokenType.COLON, BemHtmlTokenTypes.KEYWORDS_COLON);
         types.put(BHTokenType.COMMA, BemHtmlTokenTypes.KEYWORDS_DELIM);
         types.put(BHTokenType.L_BBRACE, BemHtmlTokenTypes.LEFT_BRACE);
@@ -251,6 +252,12 @@ public class BemHtmlCustomLexer {
         types.put(BHTokenType.JAVASCRIPT, BemHtmlTokenTypes.JAVASCRIPT_CODE);
         types.put(BHTokenType.JS_EXPRESSION, BemHtmlTokenTypes.JS_EXPRESSION);
         types.put(BHTokenType.BH_JSONPROP, BemHtmlTokenTypes.JSON_PROPERTY);
+
+        invalidateBemValueSet = new HashSet<BHTokenType>();
+        invalidateBemValueSet.add(BHTokenType.COLON);
+        invalidateBemValueSet.add(BHTokenType.COMMA);
+        invalidateBemValueSet.add(BHTokenType.NEWLINE);
+        invalidateBemValueSet.add(BHTokenType.L_BBRACE);
     }
 
     private List<BHToken> retokenize() {
@@ -374,12 +381,13 @@ public class BemHtmlCustomLexer {
         BHToken t, st;
         BHTokenType tt;
         List<BHToken> sub;
+        boolean valid;
         int x;
         for (int i = 0, l = tokens.size(); i < l; i++) {
+            valid = true;
             t = tokens.get(i);
             tt = t.getType();
-            if (t.isInvalid() ||
-                    tt == BHTokenType.OPERATOR ||
+            if (tt == BHTokenType.OPERATOR ||
                     tt == BHTokenType.SEMICOLON ||
                     tt == BHTokenType.DOT ||
                     tt == BHTokenType.STRING ||
@@ -388,26 +396,45 @@ public class BemHtmlCustomLexer {
             } else if (tt == BHTokenType.BH_BLOCK || tt == BHTokenType.BH_ELEM) {
                 if (i + 2 < l) {
                     sub = tokens.subList(i + 1, i + 3);
-                    if ((st = sub.get(0)).getType() != BHTokenType.WHITESPACE) st.invalidate();
+
+                    if ((st = sub.get(0)).getType() != BHTokenType.WHITESPACE) { st.invalidate(BHTokenType.ERROR); valid = false; }
                     if ((st = sub.get(1)).getType() != BHTokenType.BEM_VALUE &&
-                            st.getType() != BHTokenType.JS_EXPRESSION) st.invalidate();
+                            st.getType() != BHTokenType.JS_EXPRESSION) { st.invalidate(BHTokenType.ERROR); valid = false; }
+
+                    if (valid) validateTill(i + 3, invalidateBemValueSet, BHTokenType.ERROR_NEEDLESS_BEM_VALUE);
                 }
             } else if (tt == BHTokenType.BH_MOD || tt == BHTokenType.BH_ELEMMOD) {
                 if (i + 4 < l) {
                     sub = tokens.subList(i + 1, i + 5);
-                    if ((st = sub.get(0)).getType() != BHTokenType.WHITESPACE) st.invalidate();
+
+                    if ((st = sub.get(0)).getType() != BHTokenType.WHITESPACE) { st.invalidate(BHTokenType.ERROR); valid = false; }
                     if ((st = sub.get(1)).getType() != BHTokenType.BEM_VALUE &&
-                            st.getType() != BHTokenType.JS_EXPRESSION) st.invalidate();
-                    if ((st = sub.get(2)).getType() != BHTokenType.WHITESPACE) st.invalidate();
+                            st.getType() != BHTokenType.JS_EXPRESSION) { st.invalidate(BHTokenType.ERROR); valid = false; }
+                    if ((st = sub.get(2)).getType() != BHTokenType.WHITESPACE) { st.invalidate(BHTokenType.ERROR); valid = false; }
                     if ((st = sub.get(3)).getType() != BHTokenType.BEM_VALUE &&
-                            st.getType() != BHTokenType.JS_EXPRESSION) st.invalidate();
+                            st.getType() != BHTokenType.JS_EXPRESSION) { st.invalidate(BHTokenType.ERROR); valid = false; }
+
+                    if (valid) validateTill(i + 5, invalidateBemValueSet, BHTokenType.ERROR_NEEDLESS_BEM_VALUE);
                 }
             } else if (tt == BHTokenType.COLON) {
                 if (i + 1 < l) {
                     if ((x = isValidJSONValue(i + 1)) != -1) {
-                        tokens.get(x).invalidate();
+                        tokens.get(x).invalidate(BHTokenType.ERROR);
                     }
                 }
+            }
+        }
+    }
+
+    private void validateTill(int i, Set<BHTokenType> tillSet, BHTokenType errorType) {
+        BHToken t;
+        BHTokenType tt;
+        for (int l = tokens.size(); i < l; i++) {
+            t = tokens.get(i);
+            tt = t.getType();
+            if (tt != BHTokenType.WHITESPACE) {
+                if (!tillSet.contains(tt)) t.invalidate(errorType);
+                else return;
             }
         }
     }
@@ -550,6 +577,8 @@ public class BemHtmlCustomLexer {
         JAVASCRIPT,
         ERROR,
 
+        ERROR_NEEDLESS_BEM_VALUE,
+
         BH_JSONPROP,
         BEM_VALUE,
         JS_EXPRESSION,
@@ -574,7 +603,6 @@ public class BemHtmlCustomLexer {
         private BHTokenType type;
         private int start;
         private int end;
-        private boolean invalid = false;
 
         BHToken(BHTokenType type, int start, int end) {
             this.type = type;
@@ -602,16 +630,12 @@ public class BemHtmlCustomLexer {
             end++;
         }
 
-        public boolean isInvalid() {
-            return invalid;
-        }
-
-        public void invalidate() {
-            invalid = true;
+        public void invalidate(BHTokenType errorType) {
+            setType(errorType);
         }
 
         public String toString() {
-            return type + "[" + start + ":" + end + "]" + (invalid ? "i" : "");
+            return type + "[" + start + ":" + end + "]";
         }
     }
 

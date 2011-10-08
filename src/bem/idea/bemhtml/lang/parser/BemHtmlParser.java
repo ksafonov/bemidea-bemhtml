@@ -1,11 +1,12 @@
 package bem.idea.bemhtml.lang.parser;
 
-import bem.idea.bemhtml.lang.lexer.BemHtmlTokenTypes;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.lang.PsiParser;
 import com.intellij.psi.tree.IElementType;
 import org.jetbrains.annotations.NotNull;
+
+import static bem.idea.bemhtml.lang.lexer.BemHtmlTokenTypes.*;
 
 public class BemHtmlParser implements PsiParser {
 
@@ -23,27 +24,28 @@ public class BemHtmlParser implements PsiParser {
 
     private void parse(PsiBuilder builder) {
         IElementType first = builder.getTokenType();
-        if (first == BemHtmlTokenTypes.JAVASCRIPT_CODE ||
-                first == BemHtmlTokenTypes.KEYWORDS_VALUE ||
-                first == BemHtmlTokenTypes.KEYWORDS_DELIM ||
-                first == BemHtmlTokenTypes.KEYWORDS_COLON ||
-                first == BemHtmlTokenTypes.BEM_VALUE ||
-                first == BemHtmlTokenTypes.JS_EXPRESSION ||
-                first == BemHtmlTokenTypes.JSON_PROPERTY ||
-                first == BemHtmlTokenTypes.WHITE_SPACE ||
-                first == BemHtmlTokenTypes.KEYWORD_ATTRS ||
-                first == BemHtmlTokenTypes.KEYWORD_BEM ||
-                first == BemHtmlTokenTypes.KEYWORD_BLOCK ||
-                first == BemHtmlTokenTypes.KEYWORD_CLS ||
-                first == BemHtmlTokenTypes.KEYWORD_CONTENT ||
-                first == BemHtmlTokenTypes.KEYWORD_DEFAULT ||
-                first == BemHtmlTokenTypes.KEYWORD_ELEM ||
-                first == BemHtmlTokenTypes.KEYWORD_ELEMMOD ||
-                first == BemHtmlTokenTypes.KEYWORD_JS ||
-                first == BemHtmlTokenTypes.KEYWORD_JSATTR ||
-                first == BemHtmlTokenTypes.KEYWORD_MIX ||
-                first == BemHtmlTokenTypes.KEYWORD_MOD ||
-                first == BemHtmlTokenTypes.KEYWORD_TAG) {
+        if (first == JAVASCRIPT_CODE ||
+                first == KEYWORDS_VALUE ||
+                first == KEYWORDS_DELIM ||
+                first == KEYWORDS_COLON ||
+                first == BEM_VALUE ||
+                first == JS_EXPRESSION ||
+                first == JSON_PROPERTY ||
+                first == WHITE_SPACE ||
+                first == ERROR_NEEDLESS_BEM_VALUE ||
+                first == KEYWORD_ATTRS ||
+                first == KEYWORD_BEM ||
+                first == KEYWORD_BLOCK ||
+                first == KEYWORD_CLS ||
+                first == KEYWORD_CONTENT ||
+                first == KEYWORD_DEFAULT ||
+                first == KEYWORD_ELEM ||
+                first == KEYWORD_ELEMMOD ||
+                first == KEYWORD_JS ||
+                first == KEYWORD_JSATTR ||
+                first == KEYWORD_MIX ||
+                first == KEYWORD_MOD ||
+                first == KEYWORD_TAG) {
             parseToken(builder, first);
         } else {
             builder.advanceLexer();
