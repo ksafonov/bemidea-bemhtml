@@ -204,7 +204,6 @@ public class BemHtmlCustomLexer {
     private static Map<BHTokenType, IElementType> types;
     private static Set<BHTokenType> invalidateBemValueSet;
 
-
     static {
         bemKwd0 = new HashMap<String, BHTokenType>();
         bemKwd0.put("block", BHTokenType.BH_BLOCK);
@@ -262,6 +261,7 @@ public class BemHtmlCustomLexer {
         invalidateBemValueSet.add(BHTokenType.COMMA);
         invalidateBemValueSet.add(BHTokenType.NEWLINE);
         invalidateBemValueSet.add(BHTokenType.L_BBRACE);
+        invalidateBemValueSet.add(BHTokenType.R_BBRACE);
     }
 
     private List<BHToken> retokenize() {
@@ -406,6 +406,8 @@ public class BemHtmlCustomLexer {
                             st.getType() != BHTokenType.JS_EXPRESSION) { st.invalidate(BHTokenType.ERROR_ONE_BEM_VALUE_EXPECTED); valid = false; }
 
                     if (valid) validateTill(i + 3, invalidateBemValueSet, BHTokenType.ERROR_TOO_MANY_VALUES);
+
+                    i += 3;
                 }
             } else if (tt == BHTokenType.BH_MOD || tt == BHTokenType.BH_ELEMMOD) {
                 if (i + 4 < l) {
@@ -419,6 +421,8 @@ public class BemHtmlCustomLexer {
                             st.getType() != BHTokenType.JS_EXPRESSION) { st.invalidate(BHTokenType.ERROR_TWO_BEM_VALUES_EXPECTED); valid = false; }
 
                     if (valid) validateTill(i + 5, invalidateBemValueSet, BHTokenType.ERROR_TOO_MANY_VALUES);
+
+                    i += 5;
                 }
             } else if (tt == BHTokenType.COLON) {
                 if (i + 1 < l) {
@@ -426,6 +430,8 @@ public class BemHtmlCustomLexer {
                         tokens.get(x).invalidate(BHTokenType.ERROR);
                     }
                 }
+            } else if (tt == BHTokenType.JS_EXPRESSION) {
+                validateTill(i + 1, invalidateBemValueSet, BHTokenType.ERROR_TOO_MANY_VALUES);
             }
         }
     }
@@ -474,6 +480,18 @@ public class BemHtmlCustomLexer {
     }
 
     private int getJSExpression(int i) {
+        int x = _getJSExpression(i);
+        if (x > i - 1) {
+            BHTokenType tt;
+            for (; x > -1; x--) {
+                tt = tokens.get(x).getType();
+                if (tt != BHTokenType.WHITESPACE && tt != BHTokenType.NEWLINE) return x;
+            }
+        }
+        return x;
+    }
+
+    private int _getJSExpression(int i) {
         int l = tokens.size(), x;
         if (i < l) {
             BHToken t;
