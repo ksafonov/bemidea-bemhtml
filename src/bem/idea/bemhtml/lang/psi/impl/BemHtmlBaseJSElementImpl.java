@@ -89,35 +89,34 @@ public class BemHtmlBaseJSElementImpl extends BemHtmlElementImpl implements PsiL
             c = chars.charAt(index++);
             switch (c) {
               case'b':
-                outChars.append('\b');
+                outChars.append("\\b");
                 break;
 
               case't':
-                outChars.append('\t');
+                outChars.append("\\t");
                 break;
 
               case'n':
-                outChars.append('\n');
+                outChars.append("\\n");
                 break;
-
               case'f':
-                outChars.append('\f');
+                outChars.append("\\f");
                 break;
 
               case'r':
-                outChars.append('\r');
+                outChars.append("\\r");
                 break;
 
               case'"':
-                outChars.append('"');
+                outChars.append("\\\"");
                 break;
 
               case'\'':
-                outChars.append('\'');
+                outChars.append("\\'");
                 break;
 
               case'\\':
-                outChars.append('\\');
+                outChars.append("\\\\");
                 break;
 
               case'0':
