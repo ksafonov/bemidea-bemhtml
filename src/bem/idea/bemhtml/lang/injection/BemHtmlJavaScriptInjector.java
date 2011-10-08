@@ -27,10 +27,10 @@ public class BemHtmlJavaScriptInjector implements LanguageInjector {
             ")}";
 
     private final static String jsPrefix =
-            asgnPrefix + "function() {";
+            asgnPrefix + "function() ";
 
     private final static String jsSuffix =
-            "})}";
+            ")}";
 
     public void getLanguagesToInject(@NotNull PsiLanguageInjectionHost _host,
                                      @NotNull InjectedLanguagePlaces registrar) {
