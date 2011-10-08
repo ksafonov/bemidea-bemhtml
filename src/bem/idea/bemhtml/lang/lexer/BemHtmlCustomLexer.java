@@ -249,6 +249,7 @@ public class BemHtmlCustomLexer {
         types.put(BHTokenType.WHITESPACE, BemHtmlTokenTypes.WHITE_SPACE);
         types.put(BHTokenType.NEWLINE, BemHtmlTokenTypes.WHITE_SPACE);
         types.put(BHTokenType.JAVASCRIPT, BemHtmlTokenTypes.JAVASCRIPT_CODE);
+        types.put(BHTokenType.JS_EXPRESSION, BemHtmlTokenTypes.JS_EXPRESSION);
         types.put(BHTokenType.BH_JSONPROP, BemHtmlTokenTypes.JSON_PROPERTY);
     }
 
@@ -468,6 +469,7 @@ public class BemHtmlCustomLexer {
                                 ltt != BHTokenType.IFQ &&
                                 ltt != BHTokenType.RB_BLOCK &&
                                 ltt != BHTokenType.SB_BLOCK &&
+                                ltt != BHTokenType.STRING &&
                                 ltt != null) return i - (wasWhite ? 2 : 1);
                             break;
                         case IFQ:
@@ -546,17 +548,11 @@ public class BemHtmlCustomLexer {
         NEWLINE,
         OPERATOR,
         JAVASCRIPT,
-        SINGLE_JAVASCRIPT,
-        FIRST_JAVASCRIPT,
-        LAST_JAVASCRIPT,
         ERROR,
 
         BH_JSONPROP,
         BEM_VALUE,
         JS_EXPRESSION,
-        SINGLE_JS_EXPRESSION,
-        FIRST_JS_EXPRESSION,
-        LAST_JS_EXPRESSION,
 
         BH_BLOCK,
         BH_ELEM,
