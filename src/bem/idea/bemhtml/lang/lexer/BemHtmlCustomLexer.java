@@ -242,6 +242,9 @@ public class BemHtmlCustomLexer {
 
         types.put(BHTokenType.ERROR, BemHtmlTokenTypes.BAD_CHARACTER);
         types.put(BHTokenType.ERROR_TOO_MANY_VALUES, BemHtmlTokenTypes.ERROR_TOO_MANY_VALUES);
+        types.put(BHTokenType.ERROR_WHITESPACE_EXPECTED, BemHtmlTokenTypes.ERROR_WHITESPACE_EXPECTED);
+        types.put(BHTokenType.ERROR_ONE_BEM_VALUE_EXPECTED, BemHtmlTokenTypes.ERROR_ONE_BEM_VALUE_EXPECTED);
+        types.put(BHTokenType.ERROR_TWO_BEM_VALUES_EXPECTED, BemHtmlTokenTypes.ERROR_TWO_BEM_VALUES_EXPECTED);
 
         types.put(BHTokenType.COLON, BemHtmlTokenTypes.KEYWORDS_COLON);
         types.put(BHTokenType.COMMA, BemHtmlTokenTypes.KEYWORDS_DELIM);
