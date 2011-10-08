@@ -24,8 +24,14 @@ public class BemHtmlAnnotator extends PsiElementVisitor implements Annotator {
 
     @Override
     public void visitElement(PsiElement element) {
-        if (element.getNode().getElementType() == ERROR_NEEDLESS_BEM_VALUE) {
-            myHolder.createErrorAnnotation(element, "Needless BEM value");
+        if (element.getNode().getElementType() == ERROR_TOO_MANY_VALUES) {
+            myHolder.createErrorAnnotation(element, "Too many values");
+        } else if (element.getNode().getElementType() == ERROR_WHITESPACE_EXPECTED) {
+            myHolder.createErrorAnnotation(element, "Whitespace expected");
+        } else if (element.getNode().getElementType() == ERROR_ONE_BEM_VALUE_EXPECTED) {
+            myHolder.createErrorAnnotation(element, "One BEM value expected");
+        } else if (element.getNode().getElementType() == ERROR_TWO_BEM_VALUES_EXPECTED) {
+            myHolder.createErrorAnnotation(element, "Two BEM values expected");
         }
     }
 }

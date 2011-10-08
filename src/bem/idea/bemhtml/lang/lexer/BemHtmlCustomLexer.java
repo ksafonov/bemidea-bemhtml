@@ -241,7 +241,8 @@ public class BemHtmlCustomLexer {
         types.put(BHTokenType.BH_CONTENT, BemHtmlTokenTypes.KEYWORD_CONTENT);
 
         types.put(BHTokenType.ERROR, BemHtmlTokenTypes.BAD_CHARACTER);
-        types.put(BHTokenType.ERROR_NEEDLESS_BEM_VALUE, BemHtmlTokenTypes.ERROR_NEEDLESS_BEM_VALUE);
+        types.put(BHTokenType.ERROR_TOO_MANY_VALUES, BemHtmlTokenTypes.ERROR_TOO_MANY_VALUES);
+
         types.put(BHTokenType.COLON, BemHtmlTokenTypes.KEYWORDS_COLON);
         types.put(BHTokenType.COMMA, BemHtmlTokenTypes.KEYWORDS_DELIM);
         types.put(BHTokenType.L_BBRACE, BemHtmlTokenTypes.LEFT_BRACE);
@@ -397,24 +398,24 @@ public class BemHtmlCustomLexer {
                 if (i + 2 < l) {
                     sub = tokens.subList(i + 1, i + 3);
 
-                    if ((st = sub.get(0)).getType() != BHTokenType.WHITESPACE) { st.invalidate(BHTokenType.ERROR); valid = false; }
+                    if ((st = sub.get(0)).getType() != BHTokenType.WHITESPACE) { st.invalidate(BHTokenType.ERROR_WHITESPACE_EXPECTED); valid = false; }
                     if ((st = sub.get(1)).getType() != BHTokenType.BEM_VALUE &&
-                            st.getType() != BHTokenType.JS_EXPRESSION) { st.invalidate(BHTokenType.ERROR); valid = false; }
+                            st.getType() != BHTokenType.JS_EXPRESSION) { st.invalidate(BHTokenType.ERROR_ONE_BEM_VALUE_EXPECTED); valid = false; }
 
-                    if (valid) validateTill(i + 3, invalidateBemValueSet, BHTokenType.ERROR_NEEDLESS_BEM_VALUE);
+                    if (valid) validateTill(i + 3, invalidateBemValueSet, BHTokenType.ERROR_TOO_MANY_VALUES);
                 }
             } else if (tt == BHTokenType.BH_MOD || tt == BHTokenType.BH_ELEMMOD) {
                 if (i + 4 < l) {
                     sub = tokens.subList(i + 1, i + 5);
 
-                    if ((st = sub.get(0)).getType() != BHTokenType.WHITESPACE) { st.invalidate(BHTokenType.ERROR); valid = false; }
+                    if ((st = sub.get(0)).getType() != BHTokenType.WHITESPACE) { st.invalidate(BHTokenType.ERROR_WHITESPACE_EXPECTED); valid = false; }
                     if ((st = sub.get(1)).getType() != BHTokenType.BEM_VALUE &&
-                            st.getType() != BHTokenType.JS_EXPRESSION) { st.invalidate(BHTokenType.ERROR); valid = false; }
-                    if ((st = sub.get(2)).getType() != BHTokenType.WHITESPACE) { st.invalidate(BHTokenType.ERROR); valid = false; }
+                            st.getType() != BHTokenType.JS_EXPRESSION) { st.invalidate(BHTokenType.ERROR_TWO_BEM_VALUES_EXPECTED); valid = false; }
+                    if ((st = sub.get(2)).getType() != BHTokenType.WHITESPACE) { st.invalidate(BHTokenType.ERROR_WHITESPACE_EXPECTED); valid = false; }
                     if ((st = sub.get(3)).getType() != BHTokenType.BEM_VALUE &&
-                            st.getType() != BHTokenType.JS_EXPRESSION) { st.invalidate(BHTokenType.ERROR); valid = false; }
+                            st.getType() != BHTokenType.JS_EXPRESSION) { st.invalidate(BHTokenType.ERROR_TWO_BEM_VALUES_EXPECTED); valid = false; }
 
-                    if (valid) validateTill(i + 5, invalidateBemValueSet, BHTokenType.ERROR_NEEDLESS_BEM_VALUE);
+                    if (valid) validateTill(i + 5, invalidateBemValueSet, BHTokenType.ERROR_TOO_MANY_VALUES);
                 }
             } else if (tt == BHTokenType.COLON) {
                 if (i + 1 < l) {
@@ -577,7 +578,10 @@ public class BemHtmlCustomLexer {
         JAVASCRIPT,
         ERROR,
 
-        ERROR_NEEDLESS_BEM_VALUE,
+        ERROR_TOO_MANY_VALUES,
+        ERROR_ONE_BEM_VALUE_EXPECTED,
+        ERROR_TWO_BEM_VALUES_EXPECTED,
+        ERROR_WHITESPACE_EXPECTED,
 
         BH_JSONPROP,
         BEM_VALUE,
