@@ -4,6 +4,11 @@
     <version>1.0.5</version>
     <vendor url="https://github.com/afelix/bemidea-bemhtml">BEM</vendor>
     <change-notes><![CDATA[
+    <h3>1.0.5</h3><ul>
+        <li>IDEA11 EAP family support.</li>
+        <li>Simplified color scheme.</li>
+        <li>Bug: incorrect 'x'+'y' expression recognition.</li>
+        </ul>
     <h3>1.0.4</h3><ul>
         <li>JavaScript injection hack replaced by better solution.</li>
         <li>Bug: incorrect 'x ? y : z' expression recognition, <a href="https://github.com/afelix/bemidea-bemhtml/issues/8">issues/8</a>.</li>
