@@ -22,7 +22,7 @@ public class BemHtmlSyntaxHighlighter extends SyntaxHighlighterBase {
     private static final TextAttributes taBemEntityKeyword = new TextAttributes(new Color(0, 0, 139), null, null, null, Font.BOLD);
     private static final TextAttributes taBemModKeyword = new TextAttributes(new Color(0, 0, 139), null, null, null, Font.BOLD);
     private static final TextAttributes taBemValue = new TextAttributes(new Color(69, 139, 0), null, null, null, Font.BOLD);
-    private static final TextAttributes taJSONProperty = new TextAttributes(new Color(0, 0, 139), null, null, null, Font.PLAIN);
+    private static final TextAttributes taJSONProperty = new TextAttributes(new Color(128, 128, 0), null, null, null, Font.BOLD);
     private static final TextAttributes taJSBraces = new TextAttributes(new Color(0, 0, 0), null, null, null, Font.PLAIN);
     private static final TextAttributes taBemKeywordsDelim = new TextAttributes(new Color(0, 0, 0), null, null, null, Font.PLAIN);
     private static final TextAttributes taBemKeywordsColon = new TextAttributes(new Color(0, 0, 0), null, null, null, Font.PLAIN);

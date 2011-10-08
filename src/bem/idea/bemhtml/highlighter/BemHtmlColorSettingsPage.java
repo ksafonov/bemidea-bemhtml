@@ -17,6 +17,7 @@ public class BemHtmlColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor("Entity keyword", BemHtmlSyntaxHighlighter.KEYWORD_ENTITY),
             new AttributesDescriptor("Mod keyword", BemHtmlSyntaxHighlighter.KEYWORD_MOD),
             new AttributesDescriptor("BEM value", BemHtmlSyntaxHighlighter.BEM_VALUE),
+            new AttributesDescriptor("Other BEMJSON property", BemHtmlSyntaxHighlighter.JSON_PROPERTY),
             new AttributesDescriptor("Delim", BemHtmlSyntaxHighlighter.KEYWORDS_DELIM),
             new AttributesDescriptor("Colon", BemHtmlSyntaxHighlighter.KEYWORDS_COLON),
             new AttributesDescriptor("Braces", BemHtmlSyntaxHighlighter.BRACES),
@@ -49,7 +50,7 @@ public class BemHtmlColorSettingsPage implements ColorSettingsPage {
 
     @NotNull
     public String getDemoText() {
-        return "block b-block, elem myElem, default: {\n" +
+        return "block b-block, elem myElem, default {\n" +
                 "\n" +
                 "    mod pseudo 'y'+'e'+'s' {\n" +
                 "        bem: false,\n" +
