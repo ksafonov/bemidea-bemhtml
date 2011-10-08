@@ -6,33 +6,6 @@ import java.util.*;
 
 public class BemHtmlCustomLexer {
 
-    public static void main(String[] args) {
-        String src = "block b-page xx";
-        BemHtmlCustomLexer phcl = new BemHtmlCustomLexer();
-        phcl._parse(src);
-    }
-
-    public void _parse(String src) {
-        this.src = src;
-        init();
-        tokenize();
-        System.out.println(tokens);
-        tokens = retokenize();
-        dump(tokens);
-        validate();
-        System.out.println("==================");
-        dump(tokens);
-        System.out.println(tokens.size());
-    }
-
-    private void dump(List<BHToken> tokens) {
-        BHToken t;
-        for (int i = 0, l = tokens.size(); i < l; i++) {
-            t = tokens.get(i);
-            System.out.println(t + ": \"" + src.substring(t.getStart(), t.getEnd() + 1) + "\"");
-        }
-    }
-
     private String src;
     private List<BHToken> tokens;
     private List<BHBrace> bBraces;
