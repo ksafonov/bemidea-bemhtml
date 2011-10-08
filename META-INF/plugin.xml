@@ -4,6 +4,10 @@
     <version>1.0.6</version>
     <vendor url="https://github.com/afelix/bemidea-bemhtml">BEM</vendor>
     <change-notes><![CDATA[
+    <h3>1.0.6</h3><ul>
+        <li>Annotated validation.</li>
+        <li>Bug: escaped chars in strings inside JavaScript expression.</li>
+        </ul>
     <h3>1.0.5</h3><ul>
         <li>IDEA11 EAP family support.</li>
         <li>Simplified color scheme.</li>
