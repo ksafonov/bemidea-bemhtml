@@ -1,25 +1,11 @@
 package bem.idea.bemhtml;
 
-import bem.idea.bemhtml.file.BemHtmlFileType;
-import com.intellij.AppTopics;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ApplicationComponent;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileDocumentManagerListener;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
-import java.util.Set;
+public class BemHtmlLoader implements ApplicationComponent {
 
-public class BemHtmlLoader implements ApplicationComponent, FileDocumentManagerListener {
-
-    private final static Set<String> touchedFiles = new HashSet<String>();
-
-    public void initComponent() {
-        ApplicationManager.getApplication().getMessageBus().connect().subscribe(AppTopics.FILE_DOCUMENT_SYNC, this);
-    }
+    public void initComponent() {}
 
     public void disposeComponent() {}
 
@@ -27,28 +13,4 @@ public class BemHtmlLoader implements ApplicationComponent, FileDocumentManagerL
     public String getComponentName() {
         return "BemHtmlLoader";
     }
-
-    public void beforeAllDocumentsSaving() {}
-
-    public void beforeDocumentSaving(Document document) {}
-
-    public void beforeFileContentReload(VirtualFile file, Document document) {}
-
-    public void fileWithNoDocumentChanged(VirtualFile file) {}
-
-    public void fileContentReloaded(VirtualFile file, Document document) {}
-
-    // Hack to force highlighting
-    public void fileContentLoaded(VirtualFile file, Document document) {
-        if (file.getFileType() == BemHtmlFileType.getFileType() && !touchedFiles.contains(file.getName())) {
-            try {
-                FileDocumentManager.getInstance().reloadFromDisk(document);
-                touchedFiles.add(file.getName());
-            } catch (Exception e) {
-                // have to do it now :(
-            }
-        }
-    }
-
-    public void unsavedDocumentsDropped() {}
 }

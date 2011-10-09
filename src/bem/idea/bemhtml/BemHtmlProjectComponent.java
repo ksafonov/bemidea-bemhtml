@@ -11,8 +11,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class BemHtmlProjectComponent extends AbstractProjectComponent implements DocumentListener {
 
+    private Project myProject = null;
+
     protected BemHtmlProjectComponent(Project project) {
         super(project);
+        myProject = project;
     }
 
     public void initComponent() {
@@ -37,4 +40,5 @@ public class BemHtmlProjectComponent extends AbstractProjectComponent implements
     public String getComponentName() {
         return "BemHtmlProjectComponent";
     }
+
 }
