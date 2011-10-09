@@ -63,7 +63,14 @@ public class BemHtmlSyntaxHighlighter extends SyntaxHighlighterBase {
         TOKENS_TO_STYLES = new HashMap<IElementType, TextAttributesKey>();
 
         TOKENS_TO_STYLES.put(BemHtmlTokenTypes.WHITE_SPACE, HighlighterColors.TEXT);
+
         TOKENS_TO_STYLES.put(BemHtmlTokenTypes.BAD_CHARACTER, BAD_CHARACTER);
+        TOKENS_TO_STYLES.put(BemHtmlTokenTypes.ERROR_ONE_BEM_VALUE_EXPECTED, BAD_CHARACTER);
+        TOKENS_TO_STYLES.put(BemHtmlTokenTypes.ERROR_TWO_BEM_VALUES_EXPECTED, BAD_CHARACTER);
+        TOKENS_TO_STYLES.put(BemHtmlTokenTypes.ERROR_UNEXPECTED_CHARACTER, BAD_CHARACTER);
+        TOKENS_TO_STYLES.put(BemHtmlTokenTypes.ERROR_WHITESPACE_EXPECTED, BAD_CHARACTER);
+        TOKENS_TO_STYLES.put(BemHtmlTokenTypes.ERROR_TOO_MANY_VALUES, BAD_CHARACTER);
+
         TOKENS_TO_STYLES.put(BemHtmlTokenTypes.KEYWORDS_DELIM, KEYWORDS_DELIM);
         TOKENS_TO_STYLES.put(BemHtmlTokenTypes.KEYWORDS_COLON, KEYWORDS_COLON);
         TOKENS_TO_STYLES.put(BemHtmlTokenTypes.BEM_VALUE, BEM_VALUE);

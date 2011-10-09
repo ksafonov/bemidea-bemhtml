@@ -60,7 +60,7 @@ public class BemHtmlColorSettingsPage implements ColorSettingsPage {
                 "        mix: [ this.ctx ]\n" +
                 "    }\n" +
                 "\n" +
-                "    elemMod state current {\n" +
+                "    elemMod state current error {\n" +
                 "        content: {\n" +
                 "            tag: 'i',\n" +
                 "            elem: 'elem'\n" +
