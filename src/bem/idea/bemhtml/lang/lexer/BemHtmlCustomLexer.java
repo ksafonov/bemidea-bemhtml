@@ -296,7 +296,7 @@ public class BemHtmlCustomLexer {
                             _tokens.add(new BHToken(BHTokenType.JAVASCRIPT, t.getStart(), t1.getEnd()));
                             i = x;
                         } else {
-                            _tokens.add(new BHToken(BHTokenType.JAVASCRIPT, t.getStart(), l - 1));
+                            _tokens.add(new BHToken(BHTokenType.JAVASCRIPT, t.getStart(), tokens.get(l - 1).getEnd()));
                             i = l;
                         }
                     }
