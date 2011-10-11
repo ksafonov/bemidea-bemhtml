@@ -5,37 +5,7 @@
     <idea-version since-build="99.18"/>
     <vendor url="https://github.com/afelix/bemidea-bemhtml">BEM</vendor>
     <change-notes><![CDATA[
-    <b>1.0.9</b>:<br/>
-    &nbsp;&nbsp;* Bug: wrong EOF in case of unmatched JavaScript right curly brace.<br/>
-    <b>1.0.8</b>:<br/>
-    &nbsp;&nbsp;* Plugin initialization refactored.<br/>
-    <b>1.0.7</b>:<br/>
-    &nbsp;&nbsp;* Needless curly braces removed from prefix and suffix of injected JavaScript block.<br/>
-    &nbsp;&nbsp;* Annotated validation: unexpected character.<br/>
-    <b>1.0.6</b>:<br/>
-    &nbsp;&nbsp;* Annotated validation.<br/>
-    &nbsp;&nbsp;* Bug: escaped chars in strings inside JavaScript expression.<br/>
-    <b>1.0.5</b>:<br/>
-    &nbsp;&nbsp;* IDEA11 EAP family support.<br/>
-    &nbsp;&nbsp;* Simplified color scheme.<br/>
-    &nbsp;&nbsp;* Bug: incorrect 'x'+'y' expression recognition.<br/>
-    <b>1.0.4</b>:<br/>
-    &nbsp;&nbsp;* JavaScript injection hack replaced by better solution.<br/>
-    &nbsp;&nbsp;* Bug: incorrect 'x ? y : z' expression recognition, <a href="https://github.com/afelix/bemidea-bemhtml/issues/8">issues/8</a>.<br/>
-    &nbsp;&nbsp;* Bug: exception in case of unfinished JavaScript string literal.<br/>
-    <b>1.0.3</b>:<br/>
-    &nbsp;&nbsp;* Temporary hack: hide file reload exception on plugin startup.<br/>
-    &nbsp;&nbsp;* Custom parser instead of JFlex. It was a pain to use JFlex 'look-ahead'.<br/>
-    &nbsp;&nbsp;* BEMJSON fix: correct recognition of properties' names.<br/>
-    &nbsp;&nbsp;* Some validation added.<br/>
-    <b>1.0.2</b>:<br/>
-    &nbsp;&nbsp;* Basic structure view.<br/>
-    <b>1.0.1</b>:<br/>
-    &nbsp;&nbsp;* Braces matching, <a href="https://github.com/afelix/bemidea-bemhtml/issues/2">issues/2</a>.<br/>
-    &nbsp;&nbsp;* Some prefixes added to avoid embedded JavaScript warnings.<br/>
-    &nbsp;&nbsp;* Bug: Unresolved JavaScript array inside the template body, <a href="https://github.com/afelix/bemidea-bemhtml/issues/1">issues/1</a>.<br/>
-    <b>1.0.0</b>:<br/>
-    &nbsp;&nbsp;* Basic syntax highlighting.<br/>
+    Changelog is here: <a href="https://github.com/afelix/bemidea-bemhtml/blob/master/CHANGELOG.md">CHANGELOG.md</a>.
     ]]>
     </change-notes>
 
