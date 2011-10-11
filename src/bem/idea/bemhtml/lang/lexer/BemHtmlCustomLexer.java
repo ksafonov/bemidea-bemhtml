@@ -108,7 +108,7 @@ public class BemHtmlCustomLexer {
                                         toAdd = new BHToken(BHTokenType.ML_COMMENT, i, x);
                                         i = x;
                                     } else {
-                                        toAdd = new BHToken(BHTokenType.ML_COMMENT, i, l - 1);
+                                        toAdd = new BHToken(BHTokenType.ERROR_UNFINISHED_ML_COMMENT, i, l - 1);
                                         i = l;
                                     }
                                     break;
@@ -273,6 +273,7 @@ public class BemHtmlCustomLexer {
         types.put(BHTokenType.ERROR_ONE_BEM_VALUE_EXPECTED, BemHtmlTokenTypes.ERROR_ONE_BEM_VALUE_EXPECTED);
         types.put(BHTokenType.ERROR_TWO_BEM_VALUES_EXPECTED, BemHtmlTokenTypes.ERROR_TWO_BEM_VALUES_EXPECTED);
         types.put(BHTokenType.ERROR_UNEXPECTED_CHARACTER, BemHtmlTokenTypes.ERROR_UNEXPECTED_CHARACTER);
+        types.put(BHTokenType.ERROR_UNFINISHED_ML_COMMENT, BemHtmlTokenTypes.ERROR_UNFINISHED_ML_COMMENT);
 
         types.put(BHTokenType.COLON, BemHtmlTokenTypes.KEYWORDS_COLON);
         types.put(BHTokenType.COMMA, BemHtmlTokenTypes.KEYWORDS_DELIM);
@@ -320,7 +321,8 @@ public class BemHtmlCustomLexer {
                     tt != BHTokenType.WHITESPACE &&
                     tt != BHTokenType.SL_COMMENT &&
                     tt != BHTokenType.ML_COMMENT &&
-                    tt != BHTokenType.L_BBRACE) {
+                    tt != BHTokenType.L_BBRACE &&
+                    tt != BHTokenType.ERROR_UNFINISHED_ML_COMMENT) {
                 if ((x = addJSExpression(i, _tokens)) != -1) i = x;
                 else _tokens.add(t);
                 wantJSExpression = false;
@@ -422,7 +424,7 @@ public class BemHtmlCustomLexer {
     }
 
     private void validate() {
-        BHToken t, st;
+        BHToken t;
         BHTokenType tt;
         BHList sub;
         boolean valid;
@@ -535,6 +537,7 @@ public class BemHtmlCustomLexer {
         BHTokenType tt;
         for (int l = tokens.size(); i < l; i++) {
             tt = tokens.get(i).getType();
+            if (tt == BHTokenType.ERROR_UNFINISHED_ML_COMMENT) return -1;
             if (tt != BHTokenType.WHITESPACE &&
                     tt != BHTokenType.SL_COMMENT &&
                     tt != BHTokenType.ML_COMMENT &&
