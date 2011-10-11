@@ -277,6 +277,7 @@ public class BemHtmlCustomLexer {
         types.put(BHTokenType.ERROR_UNEXPECTED_CHARACTER, BemHtmlTokenTypes.ERROR_UNEXPECTED_CHARACTER);
         types.put(BHTokenType.ERROR_UNFINISHED_ML_COMMENT, BemHtmlTokenTypes.ERROR_UNFINISHED_ML_COMMENT);
         types.put(BHTokenType.ERROR_PUNCTUATION_EXPECTED, BemHtmlTokenTypes.ERROR_PUNCTUATION_EXPECTED);
+        types.put(BHTokenType.ERROR_INVALID_JSON_VALUE, BemHtmlTokenTypes.ERROR_INVALID_JSON_VALUE);
 
         types.put(BHTokenType.COLON, BemHtmlTokenTypes.KEYWORDS_COLON);
         types.put(BHTokenType.COMMA, BemHtmlTokenTypes.KEYWORDS_DELIM);
@@ -478,7 +479,7 @@ public class BemHtmlCustomLexer {
             } else if (tt == BHTokenType.COLON) {
                 if (i + 1 < l) {
                     if ((x = isValidJSONValue(i + 1)) != -1) {
-                        tokens.get(x).invalidate(BHTokenType.ERROR);
+                        tokens.get(x).invalidate(BHTokenType.ERROR_INVALID_JSON_VALUE);
                     }
                 }
             } else if (aloneTypesSet.contains(tt)) {
@@ -745,6 +746,7 @@ public class BemHtmlCustomLexer {
         ERROR_UNEXPECTED_CHARACTER,
         ERROR_UNFINISHED_ML_COMMENT,
         ERROR_PUNCTUATION_EXPECTED,
+        ERROR_INVALID_JSON_VALUE,
 
         SL_COMMENT,
         ML_COMMENT,
