@@ -230,6 +230,7 @@ public class BemHtmlCustomLexer {
     private static Map<String, BHTokenType> bemKwd1;
     private static Map<BHTokenType, IElementType> types;
     private static Set<BHTokenType> invalidateBemValueSet;
+    private static Set<BHTokenType> invalidateValueOrJSSet;
 
     static {
         bemKwd0 = new HashMap<String, BHTokenType>();
@@ -293,6 +294,10 @@ public class BemHtmlCustomLexer {
         invalidateBemValueSet.add(BHTokenType.NEWLINE);
         invalidateBemValueSet.add(BHTokenType.L_BBRACE);
         invalidateBemValueSet.add(BHTokenType.R_BBRACE);
+
+        invalidateValueOrJSSet = new HashSet<BHTokenType>();
+        invalidateValueOrJSSet.add(BHTokenType.JS_EXPRESSION);
+        invalidateValueOrJSSet.add(BHTokenType.BEM_VALUE);
     }
 
     private List<BHToken> retokenize() {
@@ -419,11 +424,10 @@ public class BemHtmlCustomLexer {
     private void validate() {
         BHToken t, st;
         BHTokenType tt;
-        List<BHToken> sub;
+        BHList sub;
         boolean valid;
         int x;
         for (int i = 0, l = tokens.size(); i < l; i++) {
-            valid = true;
             t = tokens.get(i);
             tt = t.getType();
             if (tt == BHTokenType.OPERATOR ||
@@ -432,31 +436,22 @@ public class BemHtmlCustomLexer {
                     tt == BHTokenType.IFQ) {
                 t.setType(BHTokenType.ERROR_UNEXPECTED_CHARACTER);
             } else if (tt == BHTokenType.BH_BLOCK || tt == BHTokenType.BH_ELEM) {
-                if (i + 2 < l) {
-                    sub = tokens.subList(i + 1, i + 3);
+                sub = getSemanticList(i + 1, 1);
+                if (sub.getFiltered().size() == 1) {
+                    valid = validateList(sub.getFiltered(), invalidateValueOrJSSet, BHTokenType.ERROR_ONE_BEM_VALUE_EXPECTED);
 
-                    if ((st = sub.get(0)).getType() != BHTokenType.WHITESPACE) { st.invalidate(BHTokenType.ERROR_WHITESPACE_EXPECTED); valid = false; }
-                    if ((st = sub.get(1)).getType() != BHTokenType.BEM_VALUE &&
-                            st.getType() != BHTokenType.JS_EXPRESSION) { st.invalidate(BHTokenType.ERROR_ONE_BEM_VALUE_EXPECTED); valid = false; }
+                    if (valid) validateTill(i + sub.getAll().size() + 1, invalidateBemValueSet, BHTokenType.ERROR_TOO_MANY_VALUES);
 
-                    if (valid) validateTill(i + 3, invalidateBemValueSet, BHTokenType.ERROR_TOO_MANY_VALUES);
-
-                    i += 3;
+                    i += sub.getAll().size();
                 }
             } else if (tt == BHTokenType.BH_MOD || tt == BHTokenType.BH_ELEMMOD) {
-                if (i + 4 < l) {
-                    sub = tokens.subList(i + 1, i + 5);
+                sub = getSemanticList(i + 1, 2);
+                if (sub.getFiltered().size() == 2) {
+                    valid = validateList(sub.getFiltered(), invalidateValueOrJSSet, BHTokenType.ERROR_ONE_BEM_VALUE_EXPECTED);
 
-                    if ((st = sub.get(0)).getType() != BHTokenType.WHITESPACE) { st.invalidate(BHTokenType.ERROR_WHITESPACE_EXPECTED); valid = false; }
-                    if ((st = sub.get(1)).getType() != BHTokenType.BEM_VALUE &&
-                            st.getType() != BHTokenType.JS_EXPRESSION) { st.invalidate(BHTokenType.ERROR_TWO_BEM_VALUES_EXPECTED); valid = false; }
-                    if ((st = sub.get(2)).getType() != BHTokenType.WHITESPACE) { st.invalidate(BHTokenType.ERROR_WHITESPACE_EXPECTED); valid = false; }
-                    if ((st = sub.get(3)).getType() != BHTokenType.BEM_VALUE &&
-                            st.getType() != BHTokenType.JS_EXPRESSION) { st.invalidate(BHTokenType.ERROR_TWO_BEM_VALUES_EXPECTED); valid = false; }
+                    if (valid) validateTill(i + sub.getAll().size() + 1, invalidateBemValueSet, BHTokenType.ERROR_TOO_MANY_VALUES);
 
-                    if (valid) validateTill(i + 5, invalidateBemValueSet, BHTokenType.ERROR_TOO_MANY_VALUES);
-
-                    i += 5;
+                    i += sub.getAll().size();
                 }
             } else if (tt == BHTokenType.COLON) {
                 if (i + 1 < l) {
@@ -470,24 +465,80 @@ public class BemHtmlCustomLexer {
         }
     }
 
+    private boolean validateList(List<BHToken> tokens,
+                                 Set<BHTokenType> expected,
+                                 BHTokenType errorType) {
+        BHToken t;
+        BHTokenType tt;
+        boolean valid = true;
+        for (int i = 0, l = tokens.size(); i < l; i++) {
+            t = tokens.get(i);
+            tt = t.getType();
+            if (!expected.contains(tt)) {
+                t.invalidate(errorType);
+                valid = false;
+            }
+        }
+        return valid;
+    }
+
+    private class BHList {
+        private List<BHToken> filtered;
+        private List<BHToken> all;
+
+        private BHList(List<BHToken> filtered, List<BHToken> all) {
+            this.filtered = filtered;
+            this.all = all;
+        }
+
+        public List<BHToken> getFiltered() {
+            return filtered;
+        }
+
+        public List<BHToken> getAll() {
+            return all;
+        }
+    }
+
+    private BHList getSemanticList(int start, int num) {
+        List<BHToken> filtered = new ArrayList<BHToken>();
+        List<BHToken> all = new ArrayList<BHToken>();
+        BHToken t;
+        for (int i = start, l = tokens.size(); i < l && filtered.size() < num; i++) {
+            t = tokens.get(i);
+            if (isSemanticToken(t.getType())) filtered.add(t);
+            all.add(t);
+        }
+        return new BHList(filtered, all);
+    }
+
     private void validateTill(int i, Set<BHTokenType> tillSet, BHTokenType errorType) {
         BHToken t;
         BHTokenType tt;
         for (int l = tokens.size(); i < l; i++) {
             t = tokens.get(i);
             tt = t.getType();
-            if (tt != BHTokenType.WHITESPACE) {
+            if (isSemanticToken(tt)) {
                 if (!tillSet.contains(tt)) t.invalidate(errorType);
                 else return;
             }
         }
     }
 
+    private boolean isSemanticToken(BHTokenType tokenType) {
+        return tokenType != BHTokenType.WHITESPACE &&
+               tokenType != BHTokenType.SL_COMMENT &&
+               tokenType != BHTokenType.ML_COMMENT;
+    }
+
     private int isValidJSONValue(int i) {
         BHTokenType tt;
         for (int l = tokens.size(); i < l; i++) {
             tt = tokens.get(i).getType();
-            if (tt != BHTokenType.WHITESPACE && tt != BHTokenType.NEWLINE) {
+            if (tt != BHTokenType.WHITESPACE &&
+                    tt != BHTokenType.SL_COMMENT &&
+                    tt != BHTokenType.ML_COMMENT &&
+                    tt != BHTokenType.NEWLINE) {
                 if (tt != BHTokenType.JS_EXPRESSION &&
                         tt != BHTokenType.L_BBRACE &&
                         tt != BHTokenType.JAVASCRIPT) return i;
@@ -519,7 +570,10 @@ public class BemHtmlCustomLexer {
             BHTokenType tt;
             for (; x > -1; x--) {
                 tt = tokens.get(x).getType();
-                if (tt != BHTokenType.WHITESPACE && tt != BHTokenType.NEWLINE) return x;
+                if (tt != BHTokenType.SL_COMMENT &&
+                    tt != BHTokenType.ML_COMMENT &&
+                    tt != BHTokenType.WHITESPACE &&
+                    tt != BHTokenType.NEWLINE) return x;
             }
         }
         return x;
@@ -530,22 +584,22 @@ public class BemHtmlCustomLexer {
         if (i < l) {
             BHToken t;
             BHTokenType tt, ltt = null;
-            boolean wasWhite = false, ifQMode = false;
+            boolean wasSCToken = false, ifQMode = false;
             for (; i < l; i++) {
                 t = tokens.get(i); tt = t.getType();
-                if (tt == BHTokenType.WHITESPACE) {
+                if (!isSemanticToken(tt)) {
                     if (ltt == BHTokenType.DOT) return i - 1;
-                    wasWhite = true;
+                    wasSCToken = true;
                 } else {
                     switch (tt) {
                         case IDENT:
                             if (ltt != BHTokenType.OPERATOR &&
                                 ltt != BHTokenType.IFQ &&
                                 ltt != BHTokenType.DOT &&
-                                ltt != null) return i - (wasWhite ? 2 : 1);
+                                ltt != null) return i - (wasSCToken ? 2 : 1);
                             break;
                         case DOT:
-                            if (wasWhite) return i - 2;
+                            if (wasSCToken) return i - 2;
                             break;
                         case OPERATOR:
                             if (ltt != BHTokenType.IDENT &&
@@ -553,7 +607,7 @@ public class BemHtmlCustomLexer {
                                 ltt != BHTokenType.RB_BLOCK &&
                                 ltt != BHTokenType.SB_BLOCK &&
                                 ltt != BHTokenType.STRING &&
-                                ltt != null) return i - (wasWhite ? 2 : 1);
+                                ltt != null) return i - (wasSCToken ? 2 : 1);
                             break;
                         case IFQ:
                             ifQMode = true;
@@ -562,10 +616,10 @@ public class BemHtmlCustomLexer {
                             if (ltt != BHTokenType.OPERATOR &&
                                 ltt != BHTokenType.IFQ &&
                                 ltt != BHTokenType.DOT &&
-                                ltt != null) return i - (wasWhite ? 2 : 1);
+                                ltt != null) return i - (wasSCToken ? 2 : 1);
                             break;
                         case COLON:
-                            if (!ifQMode) return i - (wasWhite ? 2 : 1);
+                            if (!ifQMode) return i - (wasSCToken ? 2 : 1);
                             if ((x = getJSExpression(i + 1)) != -1) {
                                 i = x;
                                 tt = tokens.get(i).getType();
@@ -576,10 +630,10 @@ public class BemHtmlCustomLexer {
                         case COMMA:
                         case L_BBRACE:
                         case R_BBRACE:
-                            return i - (wasWhite ? 2 : 1);
+                            return i - (wasSCToken ? 2 : 1);
                     }
                     ltt = tt;
-                    wasWhite = false;
+                    wasSCToken = false;
                 }
             }
         }
@@ -587,19 +641,18 @@ public class BemHtmlCustomLexer {
     }
 
     private boolean isJSONProperty(int i) {
-        BHToken t;
-        BHTokenType tt;
         int l = tokens.size();
-        i++;
-        if (i < l - 1) {
-            t = tokens.get(i); tt = t.getType();
-            if (tt == BHTokenType.WHITESPACE) {
-                i++;
-                if (i < l - 1) {
-                    t = tokens.get(i); tt = t.getType();
-                    return (tt == BHTokenType.COLON);
-                }
-            } else return (tt == BHTokenType.COLON);
+        for (i++; i < l; i++) {
+            switch (tokens.get(i).getType()) {
+                case COLON:
+                    return true;
+                case WHITESPACE:
+                case SL_COMMENT:
+                case ML_COMMENT:
+                    break;
+                default:
+                    return false;
+            }
         }
         return false;
     }
