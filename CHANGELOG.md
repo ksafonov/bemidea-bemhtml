@@ -1,4 +1,4 @@
-####1.0.10 (not yet published):
+####1.0.10:
 
 * BEMHTML line & block comments.
 * Annotated validation: [issues/13] (https://github.com/afelix/bemidea-bemhtml/issues/13), [issues/15] (https://github.com/afelix/bemidea-bemhtml/issues/15), [issues/17] (https://github.com/afelix/bemidea-bemhtml/issues/17), [issues/18] (https://github.com/afelix/bemidea-bemhtml/issues/18).
