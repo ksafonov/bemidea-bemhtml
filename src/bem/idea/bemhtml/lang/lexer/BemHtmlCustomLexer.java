@@ -232,7 +232,11 @@ public class BemHtmlCustomLexer {
     private static Set<BHTokenType> invalidateBemValueSet;
     private static Set<BHTokenType> invalidateValueOrJSSet;
     private static Set<BHTokenType> aloneTypesSet;
+    private static Set<BHTokenType> bemTypesSet;
     private static Set<BHTokenType> invalidateKwd1Set;
+    private static Set<BHTokenType> invalidateAfterCommaSet;
+    private static Set<BHTokenType> ignoreSet0;
+    private static Set<BHTokenType> ignoreSet1;
 
     static {
         bemKwd0 = new HashMap<String, BHTokenType>();
@@ -278,6 +282,7 @@ public class BemHtmlCustomLexer {
         types.put(BHTokenType.ERROR_UNFINISHED_ML_COMMENT, BemHtmlTokenTypes.ERROR_UNFINISHED_ML_COMMENT);
         types.put(BHTokenType.ERROR_PUNCTUATION_EXPECTED, BemHtmlTokenTypes.ERROR_PUNCTUATION_EXPECTED);
         types.put(BHTokenType.ERROR_INVALID_JSON_VALUE, BemHtmlTokenTypes.ERROR_INVALID_JSON_VALUE);
+        types.put(BHTokenType.ERROR_BEM_OR_JS_EXPECTED, BemHtmlTokenTypes.ERROR_BEM_OR_JS_EXPECTED);
 
         types.put(BHTokenType.COLON, BemHtmlTokenTypes.KEYWORDS_COLON);
         types.put(BHTokenType.COMMA, BemHtmlTokenTypes.KEYWORDS_DELIM);
@@ -315,11 +320,32 @@ public class BemHtmlCustomLexer {
         aloneTypesSet.add(BHTokenType.BH_MIX);
         aloneTypesSet.add(BHTokenType.BH_CONTENT);
 
+        bemTypesSet = new HashSet<BHTokenType>();
+        bemTypesSet.add(BHTokenType.BH_BLOCK);
+        bemTypesSet.add(BHTokenType.BH_ELEM);
+        bemTypesSet.add(BHTokenType.BH_MOD);
+        bemTypesSet.add(BHTokenType.BH_ELEMMOD);
+
         invalidateKwd1Set = new HashSet<BHTokenType>();
         invalidateKwd1Set.add(BHTokenType.COMMA);
         invalidateKwd1Set.add(BHTokenType.COLON);
         invalidateKwd1Set.add(BHTokenType.L_BBRACE);
         invalidateKwd1Set.add(BHTokenType.JAVASCRIPT);
+
+        invalidateAfterCommaSet = new HashSet<BHTokenType>();
+        invalidateAfterCommaSet.add(BHTokenType.JS_EXPRESSION);
+        invalidateAfterCommaSet.add(BHTokenType.BH_JSONPROP);
+        invalidateAfterCommaSet.addAll(aloneTypesSet);
+        invalidateAfterCommaSet.addAll(bemTypesSet);
+
+        ignoreSet0 = new HashSet<BHTokenType>();
+        ignoreSet0.add(BHTokenType.WHITESPACE);
+        ignoreSet0.add(BHTokenType.SL_COMMENT);
+        ignoreSet0.add(BHTokenType.ML_COMMENT);
+
+        ignoreSet1 = new HashSet<BHTokenType>();
+        ignoreSet1.addAll(ignoreSet0);
+        ignoreSet1.add(BHTokenType.NEWLINE);
     }
 
     private List<BHToken> retokenize() {
@@ -459,7 +485,7 @@ public class BemHtmlCustomLexer {
                     tt == BHTokenType.IFQ) {
                 t.setType(BHTokenType.ERROR_UNEXPECTED_CHARACTER);
             } else if (tt == BHTokenType.BH_BLOCK || tt == BHTokenType.BH_ELEM) {
-                sub = getSemanticList(i + 1, 1);
+                sub = getSemanticList(i + 1, 1, ignoreSet0);
                 if (sub.getFiltered().size() == 1) {
                     valid = validateList(sub.getFiltered(), invalidateValueOrJSSet, BHTokenType.ERROR_ONE_BEM_VALUE_EXPECTED);
 
@@ -468,7 +494,7 @@ public class BemHtmlCustomLexer {
                     i += sub.getAll().size();
                 }
             } else if (tt == BHTokenType.BH_MOD || tt == BHTokenType.BH_ELEMMOD) {
-                sub = getSemanticList(i + 1, 2);
+                sub = getSemanticList(i + 1, 2, ignoreSet0);
                 if (sub.getFiltered().size() == 2) {
                     valid = validateList(sub.getFiltered(), invalidateValueOrJSSet, BHTokenType.ERROR_ONE_BEM_VALUE_EXPECTED);
 
@@ -482,8 +508,15 @@ public class BemHtmlCustomLexer {
                         tokens.get(x).invalidate(BHTokenType.ERROR_INVALID_JSON_VALUE);
                     }
                 }
+            } else if (tt == BHTokenType.COMMA) {
+                sub = getSemanticList(i + 1, 1, ignoreSet1);
+                if (sub.getFiltered().size() == 1) {
+                    if (!validateList(sub.getFiltered(), invalidateAfterCommaSet, BHTokenType.ERROR_BEM_OR_JS_EXPECTED)) {
+                        i += sub.getAll().size();
+                    }
+                }
             } else if (aloneTypesSet.contains(tt)) {
-                sub = getSemanticList(i + 1, 1);
+                sub = getSemanticList(i + 1, 1, ignoreSet0);
                 if (sub.getFiltered().size() == 1) {
                     if (!validateList(sub.getFiltered(), invalidateKwd1Set, BHTokenType.ERROR_PUNCTUATION_EXPECTED)) {
                         i += sub.getAll().size();
@@ -530,13 +563,13 @@ public class BemHtmlCustomLexer {
         }
     }
 
-    private BHList getSemanticList(int start, int num) {
+    private BHList getSemanticList(int start, int num, Set<BHTokenType> ignoreSet) {
         List<BHToken> filtered = new ArrayList<BHToken>();
         List<BHToken> all = new ArrayList<BHToken>();
         BHToken t;
         for (int i = start, l = tokens.size(); i < l && filtered.size() < num; i++) {
             t = tokens.get(i);
-            if (isSemanticToken(t.getType())) filtered.add(t);
+            if (!ignoreSet.contains(t.getType())) filtered.add(t);
             all.add(t);
         }
         return new BHList(filtered, all);
@@ -747,6 +780,7 @@ public class BemHtmlCustomLexer {
         ERROR_UNFINISHED_ML_COMMENT,
         ERROR_PUNCTUATION_EXPECTED,
         ERROR_INVALID_JSON_VALUE,
+        ERROR_BEM_OR_JS_EXPECTED,
 
         SL_COMMENT,
         ML_COMMENT,

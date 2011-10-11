@@ -16,6 +16,7 @@ public interface BemHtmlTokenTypes {
     public static final IElementType ERROR_UNFINISHED_ML_COMMENT = new BemHtmlElementType("ERROR_UNFINISHED_ML_COMMENT");
     public static final IElementType ERROR_PUNCTUATION_EXPECTED = new BemHtmlElementType("ERROR_PUNCTUATION_EXPECTED");
     public static final IElementType ERROR_INVALID_JSON_VALUE = new BemHtmlElementType("ERROR_INVALID_JSON_VALUE");
+    public static final IElementType ERROR_BEM_OR_JS_EXPECTED = new BemHtmlElementType("ERROR_BEM_OR_JS_EXPECTED");
 
     public static final IElementType KEYWORDS_DELIM = new BemHtmlElementType("KEYWORDS_DELIM");
     public static final IElementType KEYWORDS_COLON = new BemHtmlElementType("KEYWORDS_COLON");

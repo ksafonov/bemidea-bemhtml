@@ -40,6 +40,8 @@ public class BemHtmlAnnotator extends PsiElementVisitor implements Annotator {
             myHolder.createErrorAnnotation(element, "Expecting comma, colon or braces here");
         } else if (element.getNode().getElementType() == ERROR_INVALID_JSON_VALUE) {
             myHolder.createErrorAnnotation(element, "Invalid JSON value");
+        } else if (element.getNode().getElementType() == ERROR_BEM_OR_JS_EXPECTED) {
+            myHolder.createErrorAnnotation(element, "Expecting BEM keyword, JSON property or JavaScript expression");
         }
     }
 }
