@@ -31,7 +31,6 @@ public class BemHtmlParser implements PsiParser {
                 first == BEM_VALUE ||
                 first == JS_EXPRESSION ||
                 first == JSON_PROPERTY ||
-                first == WHITE_SPACE ||
                 first == ERROR_TOO_MANY_VALUES ||
                 first == ERROR_ONE_BEM_VALUE_EXPECTED ||
                 first == ERROR_TWO_BEM_VALUES_EXPECTED ||
