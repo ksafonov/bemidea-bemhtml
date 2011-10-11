@@ -14,6 +14,7 @@ public interface BemHtmlTokenTypes {
     public static final IElementType ERROR_WHITESPACE_EXPECTED = new BemHtmlElementType("ERROR_WHITESPACE_EXPECTED");
     public static final IElementType ERROR_UNEXPECTED_CHARACTER = new BemHtmlElementType("ERROR_UNEXPECTED_CHARACTER");
     public static final IElementType ERROR_UNFINISHED_ML_COMMENT = new BemHtmlElementType("ERROR_UNFINISHED_ML_COMMENT");
+    public static final IElementType ERROR_PUNCTUATION_EXPECTED = new BemHtmlElementType("ERROR_PUNCTUATION_EXPECTED");
 
     public static final IElementType KEYWORDS_DELIM = new BemHtmlElementType("KEYWORDS_DELIM");
     public static final IElementType KEYWORDS_COLON = new BemHtmlElementType("KEYWORDS_COLON");

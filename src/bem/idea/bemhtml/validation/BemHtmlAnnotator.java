@@ -36,6 +36,8 @@ public class BemHtmlAnnotator extends PsiElementVisitor implements Annotator {
             myHolder.createErrorAnnotation(element, "Unexpected character");
         } else if (element.getNode().getElementType() == ERROR_UNFINISHED_ML_COMMENT) {
             myHolder.createErrorAnnotation(element, "Unfinished block comment");
+        } else if (element.getNode().getElementType() == ERROR_PUNCTUATION_EXPECTED) {
+            myHolder.createErrorAnnotation(element, "Expecting comma, colon or braces here");
         }
     }
 }
