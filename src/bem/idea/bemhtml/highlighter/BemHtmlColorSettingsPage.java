@@ -18,6 +18,8 @@ public class BemHtmlColorSettingsPage implements ColorSettingsPage {
             new AttributesDescriptor("Mod keyword", BemHtmlSyntaxHighlighter.KEYWORD_MOD),
             new AttributesDescriptor("BEM value", BemHtmlSyntaxHighlighter.BEM_VALUE),
             new AttributesDescriptor("Other BEMJSON property", BemHtmlSyntaxHighlighter.JSON_PROPERTY),
+            new AttributesDescriptor("Line comment", BemHtmlSyntaxHighlighter.BEM_SL_COMMENT),
+            new AttributesDescriptor("Block comment", BemHtmlSyntaxHighlighter.BEM_ML_COMMENT),
             new AttributesDescriptor("Delim", BemHtmlSyntaxHighlighter.KEYWORDS_DELIM),
             new AttributesDescriptor("Colon", BemHtmlSyntaxHighlighter.KEYWORDS_COLON),
             new AttributesDescriptor("Braces", BemHtmlSyntaxHighlighter.BRACES),

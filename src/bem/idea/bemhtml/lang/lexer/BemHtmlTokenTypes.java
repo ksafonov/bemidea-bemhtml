@@ -13,6 +13,7 @@ public interface BemHtmlTokenTypes {
     public static final IElementType ERROR_TWO_BEM_VALUES_EXPECTED = new BemHtmlElementType("ERROR_TWO_BEM_VALUES_EXPECTED");
     public static final IElementType ERROR_WHITESPACE_EXPECTED = new BemHtmlElementType("ERROR_WHITESPACE_EXPECTED");
     public static final IElementType ERROR_UNEXPECTED_CHARACTER = new BemHtmlElementType("ERROR_UNEXPECTED_CHARACTER");
+    public static final IElementType ERROR_UNFINISHED_ML_COMMENT = new BemHtmlElementType("ERROR_UNFINISHED_ML_COMMENT");
 
     public static final IElementType KEYWORDS_DELIM = new BemHtmlElementType("KEYWORDS_DELIM");
     public static final IElementType KEYWORDS_COLON = new BemHtmlElementType("KEYWORDS_COLON");
@@ -35,6 +36,9 @@ public interface BemHtmlTokenTypes {
     public static final IElementType KEYWORD_JSATTR = new BemHtmlElementType("KEYWORD_JSATTR");
     public static final IElementType KEYWORD_MIX = new BemHtmlElementType("KEYWORD_MIX");
     public static final IElementType KEYWORD_CONTENT = new BemHtmlElementType("KEYWORD_CONTENT");
+
+    public static final IElementType SL_COMMENT = new BemHtmlElementType("SL_COMMENT");
+    public static final IElementType ML_COMMENT = new BemHtmlElementType("ML_COMMENT");
 
     public static final IElementType LEFT_BRACE = new BemHtmlElementType("LEFT_BRACE");
     public static final IElementType RIGHT_BRACE = new BemHtmlElementType("RIGHT_BRACE");

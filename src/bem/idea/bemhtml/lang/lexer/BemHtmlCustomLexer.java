@@ -49,8 +49,8 @@ public class BemHtmlCustomLexer {
     private void tokenize() {
         StringBuilder sb = new StringBuilder();
 
-        int x, bs, ts, i, l;
-        char c;
+        int x, bs, ts, i, j, l;
+        char c, nc;
         BHToken toAdd, last = null;
 
         boolean bDelayL, bDelayR;
@@ -59,7 +59,7 @@ public class BemHtmlCustomLexer {
         boolean skip;
 
         if (src != null) {
-            for (i = 0, l = src.length(); i < l; i++) {
+            for (i = 0, j = i + 1, l = src.length(); i < l; i++, j = i + 1) {
                 toAdd = null;
                 bDelayL = false;
                 bDelayR = false;
@@ -90,6 +90,34 @@ public class BemHtmlCustomLexer {
                                 toAdd = last;
                                 skip = true;
                             } else toAdd = new BHToken(BHTokenType.NEWLINE, i, i);
+                            break;
+                        case '/':
+                            if (j < l) {
+                                nc = src.charAt(j);
+                                if (nc == '/') {
+                                    if ((x = findSLCommentEnd(src, j)) != j) {
+                                        toAdd = new BHToken(BHTokenType.SL_COMMENT, i, x);
+                                        i = x;
+                                    } else {
+                                        toAdd = new BHToken(BHTokenType.SL_COMMENT, i, j);
+                                        i = j;
+                                    }
+                                    break;
+                                } else if (nc == '*') {
+                                    if ((x = findMLCommentEnd(src, j)) != -1) {
+                                        toAdd = new BHToken(BHTokenType.ML_COMMENT, i, x);
+                                        i = x;
+                                    } else {
+                                        toAdd = new BHToken(BHTokenType.ML_COMMENT, i, l - 1);
+                                        i = l;
+                                    }
+                                    break;
+                                }
+                            }
+                            if (last != null && last.getType() == BHTokenType.OPERATOR) {
+                                last.increment();
+                                skip = true;
+                            } else toAdd = new BHToken(BHTokenType.OPERATOR, i, i);
                             break;
                         case '{':
                             toAdd = new BHToken(BHTokenType.L_BBRACE, i, i);
@@ -131,9 +159,8 @@ public class BemHtmlCustomLexer {
                             toAdd = new BHToken(BHTokenType.COMMA, i, i); break;
                         case '?':
                             toAdd = new BHToken(BHTokenType.IFQ, i, i); break;
-                        case '+': case '-': case '/': case '*': case '%':
-                        case '=': case '!': case '<': case '>': case '&':
-                        case '|':
+                        case '+': case '-': case '*': case '%': case '=':
+                        case '!': case '<': case '>': case '&': case '|':
                             if (last != null && last.getType() == BHTokenType.OPERATOR) {
                                 last.increment();
                                 skip = true;
@@ -257,6 +284,9 @@ public class BemHtmlCustomLexer {
         types.put(BHTokenType.JS_EXPRESSION, BemHtmlTokenTypes.JS_EXPRESSION);
         types.put(BHTokenType.BH_JSONPROP, BemHtmlTokenTypes.JSON_PROPERTY);
 
+        types.put(BHTokenType.SL_COMMENT, BemHtmlTokenTypes.SL_COMMENT);
+        types.put(BHTokenType.ML_COMMENT, BemHtmlTokenTypes.ML_COMMENT);
+
         invalidateBemValueSet = new HashSet<BHTokenType>();
         invalidateBemValueSet.add(BHTokenType.COLON);
         invalidateBemValueSet.add(BHTokenType.COMMA);
@@ -281,7 +311,11 @@ public class BemHtmlCustomLexer {
 
             v = src.substring(t.getStart(), t.getEnd() + 1);
 
-            if (wantJSExpression && tt != BHTokenType.WHITESPACE && tt != BHTokenType.L_BBRACE) {
+            if (wantJSExpression &&
+                    tt != BHTokenType.WHITESPACE &&
+                    tt != BHTokenType.SL_COMMENT &&
+                    tt != BHTokenType.ML_COMMENT &&
+                    tt != BHTokenType.L_BBRACE) {
                 if ((x = addJSExpression(i, _tokens)) != -1) i = x;
                 else _tokens.add(t);
                 wantJSExpression = false;
@@ -395,7 +429,6 @@ public class BemHtmlCustomLexer {
             if (tt == BHTokenType.OPERATOR ||
                     tt == BHTokenType.SEMICOLON ||
                     tt == BHTokenType.DOT ||
-                    //tt == BHTokenType.STRING ||
                     tt == BHTokenType.IFQ) {
                 t.setType(BHTokenType.ERROR_UNEXPECTED_CHARACTER);
             } else if (tt == BHTokenType.BH_BLOCK || tt == BHTokenType.BH_ELEM) {
@@ -581,6 +614,28 @@ public class BemHtmlCustomLexer {
         return -1;
     }
 
+    private static int findSLCommentEnd(String s, int start) {
+        char c;
+        int i = start;
+        for (int l = s.length(); i < l; i++) {
+            c = s.charAt(i);
+            if (c == '\n' || c == '\r') return i - 1;
+        }
+        return i > start ? i - 1 : start;
+    }
+
+    private static int findMLCommentEnd(String s, int start) {
+        char c;
+        int i = start, j = i + 1;
+        for (int l = s.length(); i < l; i++, j++) {
+            c = s.charAt(i);
+            if (c == '*' && j < l) {
+                if (s.charAt(j) == '/') return j;
+            }
+        }
+        return -1;
+    }
+
     private enum BHTokenType {
         L_BBRACE,
         R_BBRACE,
@@ -605,6 +660,10 @@ public class BemHtmlCustomLexer {
         ERROR_TWO_BEM_VALUES_EXPECTED,
         ERROR_WHITESPACE_EXPECTED,
         ERROR_UNEXPECTED_CHARACTER,
+        ERROR_UNFINISHED_ML_COMMENT,
+
+        SL_COMMENT,
+        ML_COMMENT,
 
         BH_JSONPROP,
         BEM_VALUE,

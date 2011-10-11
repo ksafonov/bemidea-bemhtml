@@ -31,11 +31,14 @@ public class BemHtmlParser implements PsiParser {
                 first == BEM_VALUE ||
                 first == JS_EXPRESSION ||
                 first == JSON_PROPERTY ||
+                first == SL_COMMENT ||
+                first == ML_COMMENT ||
                 first == ERROR_TOO_MANY_VALUES ||
                 first == ERROR_ONE_BEM_VALUE_EXPECTED ||
                 first == ERROR_TWO_BEM_VALUES_EXPECTED ||
                 first == ERROR_WHITESPACE_EXPECTED ||
                 first == ERROR_UNEXPECTED_CHARACTER ||
+                first == ERROR_UNFINISHED_ML_COMMENT ||
                 first == KEYWORD_ATTRS ||
                 first == KEYWORD_BEM ||
                 first == KEYWORD_BLOCK ||
