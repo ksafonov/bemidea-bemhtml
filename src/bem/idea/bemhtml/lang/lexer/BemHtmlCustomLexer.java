@@ -546,12 +546,30 @@ public class BemHtmlCustomLexer {
             tt = tokens.get(i).getType();
             if (!skipBeforeColonSet.contains(tt)) {
                 return (!aloneTypesSet.contains(tt) &&
-                        !bemTypesSet.contains(tt) &&
-                        tt != BHTokenType.JS_EXPRESSION &&
-                        tt != BHTokenType.BH_JSONPROP);
+                       !bemTypesSet.contains(tt) &&
+                       tt != BHTokenType.JS_EXPRESSION &&
+                       tt != BHTokenType.BH_JSONPROP) ||
+                       wasColon(tokens, i);
             }
         }
         return true;
+    }
+
+    private boolean wasColon(List<BHToken> tokens, int i) {
+        BHTokenType tt;
+        for (; i > -1; i--) {
+            tt = tokens.get(i).getType();
+            if (!skipBeforeColonSet.contains(tt)) {
+                switch (tt) {
+                    case COMMA:
+                    case NEWLINE:
+                        return false;
+                    case COLON:
+                        return true;
+                }
+            }
+        }
+        return false;
     }
 
     private boolean validateList(List<BHToken> tokens,
