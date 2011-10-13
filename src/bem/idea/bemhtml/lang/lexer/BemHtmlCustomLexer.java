@@ -235,6 +235,7 @@ public class BemHtmlCustomLexer {
     private static Set<BHTokenType> bemTypesSet;
     private static Set<BHTokenType> invalidateKwd1Set;
     private static Set<BHTokenType> invalidateAfterCommaSet;
+    private static Set<BHTokenType> wantJSONSet;
     private static Set<BHTokenType> ignoreSet0;
     private static Set<BHTokenType> ignoreSet1;
 
@@ -346,6 +347,14 @@ public class BemHtmlCustomLexer {
         ignoreSet1 = new HashSet<BHTokenType>();
         ignoreSet1.addAll(ignoreSet0);
         ignoreSet1.add(BHTokenType.NEWLINE);
+
+        wantJSONSet = new HashSet<BHTokenType>();
+        wantJSONSet.add(BHTokenType.WHITESPACE);
+        wantJSONSet.add(BHTokenType.SL_COMMENT);
+        wantJSONSet.add(BHTokenType.ML_COMMENT);
+        wantJSONSet.add(BHTokenType.L_BBRACE);
+        wantJSONSet.add(BHTokenType.ERROR_UNFINISHED_ML_COMMENT);
+        wantJSONSet.add(BHTokenType.NEWLINE);
     }
 
     private List<BHToken> retokenize() {
@@ -354,7 +363,7 @@ public class BemHtmlCustomLexer {
         BHTokenType tt, ntt = null, bvt;
         String v;
         int i, j, l, x;
-        boolean wantJSExpression = false;
+        boolean wantJSON = false;
         for (i = 0, j = 1, l = tokens.size(); i < l; i++, j = i + 1) {
             t = tokens.get(i);
             tt = t.getType();
@@ -364,17 +373,12 @@ public class BemHtmlCustomLexer {
 
             v = src.substring(t.getStart(), t.getEnd() + 1);
 
-            if (wantJSExpression &&
-                    tt != BHTokenType.WHITESPACE &&
-                    tt != BHTokenType.SL_COMMENT &&
-                    tt != BHTokenType.ML_COMMENT &&
-                    tt != BHTokenType.L_BBRACE &&
-                    tt != BHTokenType.ERROR_UNFINISHED_ML_COMMENT) {
+            if (wantJSON && !wantJSONSet.contains(tt)) {
                 if ((x = addJSExpression(i, _tokens)) != -1) i = x;
                 else _tokens.add(t);
-                wantJSExpression = false;
+                wantJSON = false;
             } else if (tt == BHTokenType.L_BBRACE) {
-                if (wantJSExpression) {
+                if (wantJSON) {
                     if (isJSONBlock(j)) {
                         _tokens.add(t);
                     } else {
@@ -388,7 +392,7 @@ public class BemHtmlCustomLexer {
                             i = l;
                         }
                     }
-                    wantJSExpression = false;
+                    wantJSON = false;
                 } else _tokens.add(t);
             } else if (tt == BHTokenType.IDENT) {
                 if (isJSONProperty(i)) {
@@ -444,7 +448,7 @@ public class BemHtmlCustomLexer {
                        tt == BHTokenType.SB_BLOCK) {
                 if ((x = addJSExpression(i, _tokens)) != -1) i = x;
             } else if (tt == BHTokenType.COLON) {
-                wantJSExpression = true;
+                wantJSON = true;
                 _tokens.add(t);
             } else {
                 _tokens.add(t);
