@@ -1,3 +1,8 @@
+####1.0.11:
+
+* Bug: newline inside `tag:\n{}`, [issues/20] (https://github.com/afelix/bemidea-bemhtml/issues/20).
+* Annotated validation: [issues/14] (https://github.com/afelix/bemidea-bemhtml/issues/14), [issues/21] (https://github.com/afelix/bemidea-bemhtml/issues/21).
+
 ####1.0.10:
 
 * BEMHTML line & block comments.
