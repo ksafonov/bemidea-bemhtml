@@ -236,6 +236,7 @@ public class BemHtmlCustomLexer {
     private static Set<BHTokenType> invalidateKwd1Set;
     private static Set<BHTokenType> invalidateAfterCommaSet;
     private static Set<BHTokenType> wantJSONSet;
+    private static Set<BHTokenType> skipBeforeColonSet;
     private static Set<BHTokenType> ignoreSet0;
     private static Set<BHTokenType> ignoreSet1;
 
@@ -355,6 +356,11 @@ public class BemHtmlCustomLexer {
         wantJSONSet.add(BHTokenType.L_BBRACE);
         wantJSONSet.add(BHTokenType.ERROR_UNFINISHED_ML_COMMENT);
         wantJSONSet.add(BHTokenType.NEWLINE);
+
+        skipBeforeColonSet = new HashSet<BHTokenType>();
+        skipBeforeColonSet.add(BHTokenType.WHITESPACE);
+        skipBeforeColonSet.add(BHTokenType.SL_COMMENT);
+        skipBeforeColonSet.add(BHTokenType.ML_COMMENT);
     }
 
     private List<BHToken> retokenize() {
@@ -448,7 +454,7 @@ public class BemHtmlCustomLexer {
                        tt == BHTokenType.SB_BLOCK) {
                 if ((x = addJSExpression(i, _tokens)) != -1) i = x;
             } else if (tt == BHTokenType.COLON) {
-                wantJSON = true;
+                if (!isWrongColon(_tokens, _tokens.size() - 1)) wantJSON = true;
                 _tokens.add(t);
             } else {
                 _tokens.add(t);
@@ -507,7 +513,9 @@ public class BemHtmlCustomLexer {
                     i += sub.getAll().size();
                 }
             } else if (tt == BHTokenType.COLON) {
-                if (i + 1 < l) {
+                if (isWrongColon(tokens, i - 1)) {
+                    t.invalidate(BHTokenType.ERROR_UNEXPECTED_CHARACTER);
+                } else if (i + 1 < l) {
                     if ((x = isValidJSONValue(i + 1)) != -1) {
                         tokens.get(x).invalidate(BHTokenType.ERROR_INVALID_JSON_VALUE);
                     }
@@ -530,6 +538,20 @@ public class BemHtmlCustomLexer {
                 validateTill(i + 1, invalidateBemValueSet, BHTokenType.ERROR_TOO_MANY_VALUES);
             }
         }
+    }
+
+    private boolean isWrongColon(List<BHToken> tokens, int i) {
+        BHTokenType tt;
+        for (; i > -1; i--) {
+            tt = tokens.get(i).getType();
+            if (!skipBeforeColonSet.contains(tt)) {
+                return (!aloneTypesSet.contains(tt) &&
+                        !bemTypesSet.contains(tt) &&
+                        tt != BHTokenType.JS_EXPRESSION &&
+                        tt != BHTokenType.BH_JSONPROP);
+            }
+        }
+        return true;
     }
 
     private boolean validateList(List<BHToken> tokens,
