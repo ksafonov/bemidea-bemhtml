@@ -565,6 +565,7 @@ public class BemHtmlCustomLexer {
                 switch (tt) {
                     case COMMA:
                     case NEWLINE:
+                    case L_BBRACE:
                         return false;
                     case COLON:
                         return true;
