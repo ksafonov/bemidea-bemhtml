@@ -1,3 +1,8 @@
+####1.0.12:
+
+* Bug: incorrect resolving of `===` inside JS-expression, [issues/22] (https://github.com/afelix/bemidea-bemhtml/issues/22).
+* Bug: incorrect 'unexpected character' error mark on second colon in `x: { src: 'y' }`, [issues/23] (https://github.com/afelix/bemidea-bemhtml/issues/23).
+
 ####1.0.11:
 
 * Bug: newline inside `tag:\n{}`, [issues/20] (https://github.com/afelix/bemidea-bemhtml/issues/20).
