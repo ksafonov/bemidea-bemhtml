@@ -164,6 +164,7 @@ public class BemHtmlCustomLexer {
                         case '!': case '<': case '>': case '&': case '|':
                             if (last != null && last.getType() == BHTokenType.OPERATOR) {
                                 last.increment();
+                                toAdd = last;
                                 skip = true;
                             } else toAdd = new BHToken(BHTokenType.OPERATOR, i, i);
                             break;
