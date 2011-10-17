@@ -2,6 +2,7 @@ package bem.idea.bemhtml.lang.lexer;
 
 import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.tree.IElementType;
+import bem.idea.bemhtml.lang.lexer.custom.BemHtmlCustomLexer;
 
 %%
 

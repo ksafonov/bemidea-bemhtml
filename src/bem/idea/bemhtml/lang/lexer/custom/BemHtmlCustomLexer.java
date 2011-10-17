@@ -1,5 +1,6 @@
-package bem.idea.bemhtml.lang.lexer;
+package bem.idea.bemhtml.lang.lexer.custom;
 
+import bem.idea.bemhtml.lang.lexer.BemHtmlTokenTypes;
 import com.intellij.psi.tree.IElementType;
 
 import java.util.*;
@@ -589,24 +590,6 @@ public class BemHtmlCustomLexer {
         return valid;
     }
 
-    private class BHList {
-        private List<BHToken> filtered;
-        private List<BHToken> all;
-
-        private BHList(List<BHToken> filtered, List<BHToken> all) {
-            this.filtered = filtered;
-            this.all = all;
-        }
-
-        public List<BHToken> getFiltered() {
-            return filtered;
-        }
-
-        public List<BHToken> getAll() {
-            return all;
-        }
-    }
-
     private BHList getSemanticList(int start, int num, Set<BHTokenType> ignoreSet) {
         List<BHToken> filtered = new ArrayList<BHToken>();
         List<BHToken> all = new ArrayList<BHToken>();
@@ -795,123 +778,6 @@ public class BemHtmlCustomLexer {
             }
         }
         return -1;
-    }
-
-    private enum BHTokenType {
-        L_BBRACE,
-        R_BBRACE,
-        RB_BLOCK,
-        SB_BLOCK,
-
-        IDENT,
-        STRING,
-        COLON,
-        SEMICOLON,
-        DOT,
-        COMMA,
-        IFQ,
-        WHITESPACE,
-        NEWLINE,
-        OPERATOR,
-        JAVASCRIPT,
-        ERROR,
-
-        ERROR_TOO_MANY_VALUES,
-        ERROR_ONE_BEM_VALUE_EXPECTED,
-        ERROR_TWO_BEM_VALUES_EXPECTED,
-        ERROR_WHITESPACE_EXPECTED,
-        ERROR_UNEXPECTED_CHARACTER,
-        ERROR_UNFINISHED_ML_COMMENT,
-        ERROR_PUNCTUATION_EXPECTED,
-        ERROR_INVALID_JSON_VALUE,
-        ERROR_BEM_OR_JS_EXPECTED,
-
-        SL_COMMENT,
-        ML_COMMENT,
-
-        BH_JSONPROP,
-        BEM_VALUE,
-        JS_EXPRESSION,
-
-        BH_BLOCK,
-        BH_ELEM,
-        BH_MOD,
-        BH_ELEMMOD,
-
-        BH_DEFAULT,
-        BH_TAG,
-        BH_ATTRS,
-        BH_CLS,
-        BH_BEM,
-        BH_JS,
-        BH_JSATTR,
-        BH_MIX,
-        BH_CONTENT
-    }
-
-    private class BHToken {
-        private BHTokenType type;
-        private int start;
-        private int end;
-
-        BHToken(BHTokenType type, int start, int end) {
-            this.type = type;
-            this.start = start;
-            this.end = end;
-        }
-
-        public BHTokenType getType() {
-            return type;
-        }
-
-        public void setType(BHTokenType type) {
-            this.type = type;
-        }
-
-        public int getStart() {
-            return start;
-        }
-
-        public int getEnd() {
-            return end;
-        }
-
-        public void increment() {
-            end++;
-        }
-
-        public void invalidate(BHTokenType errorType) {
-            setType(errorType);
-        }
-
-        public String toString() {
-            return type + "[" + start + ":" + end + "]";
-        }
-    }
-
-    private class BHBrace {
-        private int l;
-        private int r = -1;
-
-        BHBrace(int l) {
-            this.l = l;
-        }
-
-        public void setR(int r) {
-            this.r = r;
-        }
-
-        public int getL() {
-            return l;
-        }
-
-        public int getR() {
-            return r;
-        }
-
-        public String toString() {
-            return l + "/" + r;
-        }
     }
 
 }
