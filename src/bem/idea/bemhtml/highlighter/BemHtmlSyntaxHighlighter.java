@@ -27,7 +27,7 @@ public class BemHtmlSyntaxHighlighter extends SyntaxHighlighterBase {
     private static final TextAttributes taBemKeywordsDelim = new TextAttributes(new Color(0, 0, 0), null, null, null, Font.PLAIN);
     private static final TextAttributes taBemKeywordsColon = new TextAttributes(new Color(0, 0, 0), null, null, null, Font.PLAIN);
     private static final TextAttributes taBemError = new TextAttributes(new Color(0, 0, 0), null, new Color(255, 0, 0), EffectType.WAVE_UNDERSCORE, Font.PLAIN);
-    private static final TextAttributes taBemComment = new TextAttributes(new Color(128, 128, 0), null, null, null, Font.ITALIC);
+    private static final TextAttributes taBemComment = new TextAttributes(new Color(128, 128, 128), null, null, null, Font.ITALIC);
 
     private static final Map<IElementType, TextAttributesKey> TOKENS_TO_STYLES;
 

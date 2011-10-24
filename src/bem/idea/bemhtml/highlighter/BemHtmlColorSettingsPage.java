@@ -53,7 +53,7 @@ public class BemHtmlColorSettingsPage implements ColorSettingsPage {
     @NotNull
     public String getDemoText() {
         return "block b-block, elem myElem, default {\n" +
-                "/* comment */\n" +
+                "    /* comment */\n" +
                 "    mod pseudo 'y'+'e'+'s': {\n" +
                 "        bem: false,\n" +
                 "        js: true,\n" +
@@ -61,7 +61,7 @@ public class BemHtmlColorSettingsPage implements ColorSettingsPage {
                 "        myProperty: 'text',\n" +
                 "        mix: [ this.ctx ]\n" +
                 "    }\n" +
-                "\n" +
+                "    // comment\n" +
                 "    elemMod state current wrong {\n" +
                 "        content: {\n" +
                 "            tag: 'i',\n" +

@@ -13,6 +13,143 @@ public class BemHtmlCustomLexer {
     private Map<Integer, Integer> bBracesIdx;
     private int current = -1;
 
+    private static Map<String, BHTokenType> bemKwd0;
+    private static Map<String, BHTokenType> bemKwd1;
+    private static Map<BHTokenType, IElementType> types;
+    private static Set<BHTokenType> invalidateBemValueSet;
+    private static Set<BHTokenType> invalidateValueOrJSSet;
+    private static Set<BHTokenType> aloneTypesSet;
+    private static Set<BHTokenType> bemTypesSet;
+    private static Set<BHTokenType> invalidateKwd1Set;
+    private static Set<BHTokenType> invalidateAfterCommaSet;
+    private static Set<BHTokenType> wantJSONSet;
+    private static Set<BHTokenType> skipBeforeColonSet;
+    private static Set<BHTokenType> ignoreSet0;
+    private static Set<BHTokenType> ignoreSet1;
+
+    static {
+        bemKwd0 = new HashMap<String, BHTokenType>();
+        bemKwd0.put("block", BHTokenType.BH_BLOCK);
+        bemKwd0.put("elem", BHTokenType.BH_ELEM);
+        bemKwd0.put("mod", BHTokenType.BH_MOD);
+        bemKwd0.put("elemMod", BHTokenType.BH_ELEMMOD);
+
+        bemKwd1 = new HashMap<String, BHTokenType>();
+        bemKwd1.put("default", BHTokenType.BH_DEFAULT);
+        bemKwd1.put("tag", BHTokenType.BH_TAG);
+        bemKwd1.put("attrs", BHTokenType.BH_ATTRS);
+        bemKwd1.put("cls", BHTokenType.BH_CLS);
+        bemKwd1.put("bem", BHTokenType.BH_BEM);
+        bemKwd1.put("js", BHTokenType.BH_JS);
+        bemKwd1.put("jsAttr", BHTokenType.BH_JSATTR);
+        bemKwd1.put("mix", BHTokenType.BH_MIX);
+        bemKwd1.put("content", BHTokenType.BH_CONTENT);
+
+        types = new HashMap<BHTokenType, IElementType>();
+
+        types.put(BHTokenType.BH_BLOCK, BemHtmlTokenTypes.KEYWORD_BLOCK);
+        types.put(BHTokenType.BH_ELEM, BemHtmlTokenTypes.KEYWORD_ELEM);
+        types.put(BHTokenType.BH_MOD, BemHtmlTokenTypes.KEYWORD_MOD);
+        types.put(BHTokenType.BH_ELEMMOD, BemHtmlTokenTypes.KEYWORD_ELEMMOD);
+
+        types.put(BHTokenType.BH_DEFAULT, BemHtmlTokenTypes.KEYWORD_DEFAULT);
+        types.put(BHTokenType.BH_TAG, BemHtmlTokenTypes.KEYWORD_TAG);
+        types.put(BHTokenType.BH_ATTRS, BemHtmlTokenTypes.KEYWORD_ATTRS);
+        types.put(BHTokenType.BH_CLS, BemHtmlTokenTypes.KEYWORD_CLS);
+        types.put(BHTokenType.BH_BEM, BemHtmlTokenTypes.KEYWORD_BEM);
+        types.put(BHTokenType.BH_JS, BemHtmlTokenTypes.KEYWORD_JS);
+        types.put(BHTokenType.BH_JSATTR, BemHtmlTokenTypes.KEYWORD_JSATTR);
+        types.put(BHTokenType.BH_MIX, BemHtmlTokenTypes.KEYWORD_MIX);
+        types.put(BHTokenType.BH_CONTENT, BemHtmlTokenTypes.KEYWORD_CONTENT);
+
+        types.put(BHTokenType.ERROR, BemHtmlTokenTypes.BAD_CHARACTER);
+        types.put(BHTokenType.ERROR_TOO_MANY_VALUES, BemHtmlTokenTypes.ERROR_TOO_MANY_VALUES);
+        types.put(BHTokenType.ERROR_WHITESPACE_EXPECTED, BemHtmlTokenTypes.ERROR_WHITESPACE_EXPECTED);
+        types.put(BHTokenType.ERROR_ONE_BEM_VALUE_EXPECTED, BemHtmlTokenTypes.ERROR_ONE_BEM_VALUE_EXPECTED);
+        types.put(BHTokenType.ERROR_TWO_BEM_VALUES_EXPECTED, BemHtmlTokenTypes.ERROR_TWO_BEM_VALUES_EXPECTED);
+        types.put(BHTokenType.ERROR_UNEXPECTED_CHARACTER, BemHtmlTokenTypes.ERROR_UNEXPECTED_CHARACTER);
+        types.put(BHTokenType.ERROR_UNFINISHED_ML_COMMENT, BemHtmlTokenTypes.ERROR_UNFINISHED_ML_COMMENT);
+        types.put(BHTokenType.ERROR_PUNCTUATION_EXPECTED, BemHtmlTokenTypes.ERROR_PUNCTUATION_EXPECTED);
+        types.put(BHTokenType.ERROR_INVALID_JSON_VALUE, BemHtmlTokenTypes.ERROR_INVALID_JSON_VALUE);
+        types.put(BHTokenType.ERROR_BEM_OR_JS_EXPECTED, BemHtmlTokenTypes.ERROR_BEM_OR_JS_EXPECTED);
+
+        types.put(BHTokenType.COLON, BemHtmlTokenTypes.KEYWORDS_COLON);
+        types.put(BHTokenType.COMMA, BemHtmlTokenTypes.KEYWORDS_DELIM);
+        types.put(BHTokenType.L_BBRACE, BemHtmlTokenTypes.LEFT_BRACE);
+        types.put(BHTokenType.R_BBRACE, BemHtmlTokenTypes.RIGHT_BRACE);
+        types.put(BHTokenType.BEM_VALUE, BemHtmlTokenTypes.BEM_VALUE);
+        types.put(BHTokenType.WHITESPACE, BemHtmlTokenTypes.WHITE_SPACE);
+        types.put(BHTokenType.NEWLINE, BemHtmlTokenTypes.WHITE_SPACE);
+        types.put(BHTokenType.JAVASCRIPT, BemHtmlTokenTypes.JAVASCRIPT_CODE);
+        types.put(BHTokenType.JS_EXPRESSION, BemHtmlTokenTypes.JS_EXPRESSION);
+        types.put(BHTokenType.BH_JSONPROP, BemHtmlTokenTypes.JSON_PROPERTY);
+
+        types.put(BHTokenType.SL_COMMENT, BemHtmlTokenTypes.SL_COMMENT);
+        types.put(BHTokenType.ML_COMMENT, BemHtmlTokenTypes.ML_COMMENT);
+
+        invalidateBemValueSet = new HashSet<BHTokenType>();
+        invalidateBemValueSet.add(BHTokenType.COLON);
+        invalidateBemValueSet.add(BHTokenType.COMMA);
+        invalidateBemValueSet.add(BHTokenType.NEWLINE);
+        invalidateBemValueSet.add(BHTokenType.L_BBRACE);
+        invalidateBemValueSet.add(BHTokenType.R_BBRACE);
+
+        invalidateValueOrJSSet = new HashSet<BHTokenType>();
+        invalidateValueOrJSSet.add(BHTokenType.JS_EXPRESSION);
+        invalidateValueOrJSSet.add(BHTokenType.BEM_VALUE);
+
+        aloneTypesSet = new HashSet<BHTokenType>();
+        aloneTypesSet.add(BHTokenType.BH_DEFAULT);
+        aloneTypesSet.add(BHTokenType.BH_TAG);
+        aloneTypesSet.add(BHTokenType.BH_ATTRS);
+        aloneTypesSet.add(BHTokenType.BH_CLS);
+        aloneTypesSet.add(BHTokenType.BH_BEM);
+        aloneTypesSet.add(BHTokenType.BH_JS);
+        aloneTypesSet.add(BHTokenType.BH_JSATTR);
+        aloneTypesSet.add(BHTokenType.BH_MIX);
+        aloneTypesSet.add(BHTokenType.BH_CONTENT);
+
+        bemTypesSet = new HashSet<BHTokenType>();
+        bemTypesSet.add(BHTokenType.BH_BLOCK);
+        bemTypesSet.add(BHTokenType.BH_ELEM);
+        bemTypesSet.add(BHTokenType.BH_MOD);
+        bemTypesSet.add(BHTokenType.BH_ELEMMOD);
+
+        invalidateKwd1Set = new HashSet<BHTokenType>();
+        invalidateKwd1Set.add(BHTokenType.COMMA);
+        invalidateKwd1Set.add(BHTokenType.COLON);
+        invalidateKwd1Set.add(BHTokenType.L_BBRACE);
+        invalidateKwd1Set.add(BHTokenType.JAVASCRIPT);
+
+        invalidateAfterCommaSet = new HashSet<BHTokenType>();
+        invalidateAfterCommaSet.add(BHTokenType.JS_EXPRESSION);
+        invalidateAfterCommaSet.add(BHTokenType.BH_JSONPROP);
+        invalidateAfterCommaSet.addAll(aloneTypesSet);
+        invalidateAfterCommaSet.addAll(bemTypesSet);
+
+        ignoreSet0 = new HashSet<BHTokenType>();
+        ignoreSet0.add(BHTokenType.WHITESPACE);
+        ignoreSet0.add(BHTokenType.SL_COMMENT);
+        ignoreSet0.add(BHTokenType.ML_COMMENT);
+
+        ignoreSet1 = new HashSet<BHTokenType>();
+        ignoreSet1.addAll(ignoreSet0);
+        ignoreSet1.add(BHTokenType.NEWLINE);
+
+        wantJSONSet = new HashSet<BHTokenType>();
+        wantJSONSet.add(BHTokenType.WHITESPACE);
+        wantJSONSet.add(BHTokenType.SL_COMMENT);
+        wantJSONSet.add(BHTokenType.ML_COMMENT);
+        wantJSONSet.add(BHTokenType.L_BBRACE);
+        wantJSONSet.add(BHTokenType.ERROR_UNFINISHED_ML_COMMENT);
+        wantJSONSet.add(BHTokenType.NEWLINE);
+
+        skipBeforeColonSet = new HashSet<BHTokenType>();
+        skipBeforeColonSet.add(BHTokenType.WHITESPACE);
+        skipBeforeColonSet.add(BHTokenType.SL_COMMENT);
+        skipBeforeColonSet.add(BHTokenType.ML_COMMENT);
+    }
+
     public BemHtmlCustomLexer() {}
 
     public void parse(String src) {
@@ -20,7 +157,7 @@ public class BemHtmlCustomLexer {
         current = -1;
         init();
         tokenize();
-        tokens = retokenize();
+        retokenize();
         validate();
     }
 
@@ -228,144 +365,7 @@ public class BemHtmlCustomLexer {
         return -1;
     }
 
-    private static Map<String, BHTokenType> bemKwd0;
-    private static Map<String, BHTokenType> bemKwd1;
-    private static Map<BHTokenType, IElementType> types;
-    private static Set<BHTokenType> invalidateBemValueSet;
-    private static Set<BHTokenType> invalidateValueOrJSSet;
-    private static Set<BHTokenType> aloneTypesSet;
-    private static Set<BHTokenType> bemTypesSet;
-    private static Set<BHTokenType> invalidateKwd1Set;
-    private static Set<BHTokenType> invalidateAfterCommaSet;
-    private static Set<BHTokenType> wantJSONSet;
-    private static Set<BHTokenType> skipBeforeColonSet;
-    private static Set<BHTokenType> ignoreSet0;
-    private static Set<BHTokenType> ignoreSet1;
-
-    static {
-        bemKwd0 = new HashMap<String, BHTokenType>();
-        bemKwd0.put("block", BHTokenType.BH_BLOCK);
-        bemKwd0.put("elem", BHTokenType.BH_ELEM);
-        bemKwd0.put("mod", BHTokenType.BH_MOD);
-        bemKwd0.put("elemMod", BHTokenType.BH_ELEMMOD);
-
-        bemKwd1 = new HashMap<String, BHTokenType>();
-        bemKwd1.put("default", BHTokenType.BH_DEFAULT);
-        bemKwd1.put("tag", BHTokenType.BH_TAG);
-        bemKwd1.put("attrs", BHTokenType.BH_ATTRS);
-        bemKwd1.put("cls", BHTokenType.BH_CLS);
-        bemKwd1.put("bem", BHTokenType.BH_BEM);
-        bemKwd1.put("js", BHTokenType.BH_JS);
-        bemKwd1.put("jsAttr", BHTokenType.BH_JSATTR);
-        bemKwd1.put("mix", BHTokenType.BH_MIX);
-        bemKwd1.put("content", BHTokenType.BH_CONTENT);
-
-        types = new HashMap<BHTokenType, IElementType>();
-
-        types.put(BHTokenType.BH_BLOCK, BemHtmlTokenTypes.KEYWORD_BLOCK);
-        types.put(BHTokenType.BH_ELEM, BemHtmlTokenTypes.KEYWORD_ELEM);
-        types.put(BHTokenType.BH_MOD, BemHtmlTokenTypes.KEYWORD_MOD);
-        types.put(BHTokenType.BH_ELEMMOD, BemHtmlTokenTypes.KEYWORD_ELEMMOD);
-
-        types.put(BHTokenType.BH_DEFAULT, BemHtmlTokenTypes.KEYWORD_DEFAULT);
-        types.put(BHTokenType.BH_TAG, BemHtmlTokenTypes.KEYWORD_TAG);
-        types.put(BHTokenType.BH_ATTRS, BemHtmlTokenTypes.KEYWORD_ATTRS);
-        types.put(BHTokenType.BH_CLS, BemHtmlTokenTypes.KEYWORD_CLS);
-        types.put(BHTokenType.BH_BEM, BemHtmlTokenTypes.KEYWORD_BEM);
-        types.put(BHTokenType.BH_JS, BemHtmlTokenTypes.KEYWORD_JS);
-        types.put(BHTokenType.BH_JSATTR, BemHtmlTokenTypes.KEYWORD_JSATTR);
-        types.put(BHTokenType.BH_MIX, BemHtmlTokenTypes.KEYWORD_MIX);
-        types.put(BHTokenType.BH_CONTENT, BemHtmlTokenTypes.KEYWORD_CONTENT);
-
-        types.put(BHTokenType.ERROR, BemHtmlTokenTypes.BAD_CHARACTER);
-        types.put(BHTokenType.ERROR_TOO_MANY_VALUES, BemHtmlTokenTypes.ERROR_TOO_MANY_VALUES);
-        types.put(BHTokenType.ERROR_WHITESPACE_EXPECTED, BemHtmlTokenTypes.ERROR_WHITESPACE_EXPECTED);
-        types.put(BHTokenType.ERROR_ONE_BEM_VALUE_EXPECTED, BemHtmlTokenTypes.ERROR_ONE_BEM_VALUE_EXPECTED);
-        types.put(BHTokenType.ERROR_TWO_BEM_VALUES_EXPECTED, BemHtmlTokenTypes.ERROR_TWO_BEM_VALUES_EXPECTED);
-        types.put(BHTokenType.ERROR_UNEXPECTED_CHARACTER, BemHtmlTokenTypes.ERROR_UNEXPECTED_CHARACTER);
-        types.put(BHTokenType.ERROR_UNFINISHED_ML_COMMENT, BemHtmlTokenTypes.ERROR_UNFINISHED_ML_COMMENT);
-        types.put(BHTokenType.ERROR_PUNCTUATION_EXPECTED, BemHtmlTokenTypes.ERROR_PUNCTUATION_EXPECTED);
-        types.put(BHTokenType.ERROR_INVALID_JSON_VALUE, BemHtmlTokenTypes.ERROR_INVALID_JSON_VALUE);
-        types.put(BHTokenType.ERROR_BEM_OR_JS_EXPECTED, BemHtmlTokenTypes.ERROR_BEM_OR_JS_EXPECTED);
-
-        types.put(BHTokenType.COLON, BemHtmlTokenTypes.KEYWORDS_COLON);
-        types.put(BHTokenType.COMMA, BemHtmlTokenTypes.KEYWORDS_DELIM);
-        types.put(BHTokenType.L_BBRACE, BemHtmlTokenTypes.LEFT_BRACE);
-        types.put(BHTokenType.R_BBRACE, BemHtmlTokenTypes.RIGHT_BRACE);
-        types.put(BHTokenType.BEM_VALUE, BemHtmlTokenTypes.BEM_VALUE);
-        types.put(BHTokenType.WHITESPACE, BemHtmlTokenTypes.WHITE_SPACE);
-        types.put(BHTokenType.NEWLINE, BemHtmlTokenTypes.WHITE_SPACE);
-        types.put(BHTokenType.JAVASCRIPT, BemHtmlTokenTypes.JAVASCRIPT_CODE);
-        types.put(BHTokenType.JS_EXPRESSION, BemHtmlTokenTypes.JS_EXPRESSION);
-        types.put(BHTokenType.BH_JSONPROP, BemHtmlTokenTypes.JSON_PROPERTY);
-
-        types.put(BHTokenType.SL_COMMENT, BemHtmlTokenTypes.SL_COMMENT);
-        types.put(BHTokenType.ML_COMMENT, BemHtmlTokenTypes.ML_COMMENT);
-
-        invalidateBemValueSet = new HashSet<BHTokenType>();
-        invalidateBemValueSet.add(BHTokenType.COLON);
-        invalidateBemValueSet.add(BHTokenType.COMMA);
-        invalidateBemValueSet.add(BHTokenType.NEWLINE);
-        invalidateBemValueSet.add(BHTokenType.L_BBRACE);
-        invalidateBemValueSet.add(BHTokenType.R_BBRACE);
-
-        invalidateValueOrJSSet = new HashSet<BHTokenType>();
-        invalidateValueOrJSSet.add(BHTokenType.JS_EXPRESSION);
-        invalidateValueOrJSSet.add(BHTokenType.BEM_VALUE);
-
-        aloneTypesSet = new HashSet<BHTokenType>();
-        aloneTypesSet.add(BHTokenType.BH_DEFAULT);
-        aloneTypesSet.add(BHTokenType.BH_TAG);
-        aloneTypesSet.add(BHTokenType.BH_ATTRS);
-        aloneTypesSet.add(BHTokenType.BH_CLS);
-        aloneTypesSet.add(BHTokenType.BH_BEM);
-        aloneTypesSet.add(BHTokenType.BH_JS);
-        aloneTypesSet.add(BHTokenType.BH_JSATTR);
-        aloneTypesSet.add(BHTokenType.BH_MIX);
-        aloneTypesSet.add(BHTokenType.BH_CONTENT);
-
-        bemTypesSet = new HashSet<BHTokenType>();
-        bemTypesSet.add(BHTokenType.BH_BLOCK);
-        bemTypesSet.add(BHTokenType.BH_ELEM);
-        bemTypesSet.add(BHTokenType.BH_MOD);
-        bemTypesSet.add(BHTokenType.BH_ELEMMOD);
-
-        invalidateKwd1Set = new HashSet<BHTokenType>();
-        invalidateKwd1Set.add(BHTokenType.COMMA);
-        invalidateKwd1Set.add(BHTokenType.COLON);
-        invalidateKwd1Set.add(BHTokenType.L_BBRACE);
-        invalidateKwd1Set.add(BHTokenType.JAVASCRIPT);
-
-        invalidateAfterCommaSet = new HashSet<BHTokenType>();
-        invalidateAfterCommaSet.add(BHTokenType.JS_EXPRESSION);
-        invalidateAfterCommaSet.add(BHTokenType.BH_JSONPROP);
-        invalidateAfterCommaSet.addAll(aloneTypesSet);
-        invalidateAfterCommaSet.addAll(bemTypesSet);
-
-        ignoreSet0 = new HashSet<BHTokenType>();
-        ignoreSet0.add(BHTokenType.WHITESPACE);
-        ignoreSet0.add(BHTokenType.SL_COMMENT);
-        ignoreSet0.add(BHTokenType.ML_COMMENT);
-
-        ignoreSet1 = new HashSet<BHTokenType>();
-        ignoreSet1.addAll(ignoreSet0);
-        ignoreSet1.add(BHTokenType.NEWLINE);
-
-        wantJSONSet = new HashSet<BHTokenType>();
-        wantJSONSet.add(BHTokenType.WHITESPACE);
-        wantJSONSet.add(BHTokenType.SL_COMMENT);
-        wantJSONSet.add(BHTokenType.ML_COMMENT);
-        wantJSONSet.add(BHTokenType.L_BBRACE);
-        wantJSONSet.add(BHTokenType.ERROR_UNFINISHED_ML_COMMENT);
-        wantJSONSet.add(BHTokenType.NEWLINE);
-
-        skipBeforeColonSet = new HashSet<BHTokenType>();
-        skipBeforeColonSet.add(BHTokenType.WHITESPACE);
-        skipBeforeColonSet.add(BHTokenType.SL_COMMENT);
-        skipBeforeColonSet.add(BHTokenType.ML_COMMENT);
-    }
-
-    private List<BHToken> retokenize() {
+    private void retokenize() {
         List<BHToken> _tokens = new ArrayList<BHToken>();
         BHToken t, nt = null, t0, t1;
         BHTokenType tt, ntt = null, bvt;
@@ -464,7 +464,7 @@ public class BemHtmlCustomLexer {
             nt = null; ntt = null;
         }
 
-        return _tokens;
+        tokens = _tokens;
     }
 
     private boolean isJSONBlock(int i) {
@@ -482,11 +482,22 @@ public class BemHtmlCustomLexer {
         return false;
     }
 
+    private int validateBemValue(int i, int num) {
+        BHList sub = getSemanticList(i + 1, num, ignoreSet0);
+        if (sub.getFiltered().size() == num) {
+            boolean valid = validateList(sub.getFiltered(), invalidateValueOrJSSet, BHTokenType.ERROR_ONE_BEM_VALUE_EXPECTED);
+
+            if (valid) validateTill(i + sub.getAll().size() + 1, invalidateBemValueSet, BHTokenType.ERROR_TOO_MANY_VALUES);
+
+            return sub.getAll().size();
+        }
+        return 0;
+    }
+
     private void validate() {
         BHToken t;
         BHTokenType tt;
         BHList sub;
-        boolean valid;
         int x;
         for (int i = 0, l = tokens.size(); i < l; i++) {
             t = tokens.get(i);
@@ -497,23 +508,9 @@ public class BemHtmlCustomLexer {
                     tt == BHTokenType.IFQ) {
                 t.setType(BHTokenType.ERROR_UNEXPECTED_CHARACTER);
             } else if (tt == BHTokenType.BH_BLOCK || tt == BHTokenType.BH_ELEM) {
-                sub = getSemanticList(i + 1, 1, ignoreSet0);
-                if (sub.getFiltered().size() == 1) {
-                    valid = validateList(sub.getFiltered(), invalidateValueOrJSSet, BHTokenType.ERROR_ONE_BEM_VALUE_EXPECTED);
-
-                    if (valid) validateTill(i + sub.getAll().size() + 1, invalidateBemValueSet, BHTokenType.ERROR_TOO_MANY_VALUES);
-
-                    i += sub.getAll().size();
-                }
+                i += validateBemValue(i, 1);
             } else if (tt == BHTokenType.BH_MOD || tt == BHTokenType.BH_ELEMMOD) {
-                sub = getSemanticList(i + 1, 2, ignoreSet0);
-                if (sub.getFiltered().size() == 2) {
-                    valid = validateList(sub.getFiltered(), invalidateValueOrJSSet, BHTokenType.ERROR_ONE_BEM_VALUE_EXPECTED);
-
-                    if (valid) validateTill(i + sub.getAll().size() + 1, invalidateBemValueSet, BHTokenType.ERROR_TOO_MANY_VALUES);
-
-                    i += sub.getAll().size();
-                }
+                i += validateBemValue(i, 2);
             } else if (tt == BHTokenType.COLON) {
                 if (isWrongColon(tokens, i - 1)) {
                     t.invalidate(BHTokenType.ERROR_UNEXPECTED_CHARACTER);
