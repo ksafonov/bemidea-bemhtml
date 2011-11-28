@@ -21,7 +21,7 @@ public class BemHtmlFileViewProvider extends SingleRootFileViewProvider {
     }
 
     public boolean supportsIncrementalReparse(final Language rootLanguage) {
-        return true;
+        return false;
     }
 
 }

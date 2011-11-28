@@ -1,7 +1,8 @@
 package bem.idea.bemhtml.highlighter;
 
-import bem.idea.bemhtml.lang.lexer.BemHtmlHighlighterLexer;
 import bem.idea.bemhtml.lang.lexer.BemHtmlTokenTypes;
+import bem.idea.bemhtml.lang.lexer.custom.BemHtmlTokenizer;
+import bem.idea.bemhtml.lang.lexer.custom.CustomLexer;
 import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
@@ -17,8 +18,6 @@ import java.util.Map;
 
 public class BemHtmlSyntaxHighlighter extends SyntaxHighlighterBase {
 
-    private final BemHtmlHighlighterLexer lexer = new BemHtmlHighlighterLexer();
-
     private static final TextAttributes taBemEntityKeyword = new TextAttributes(new Color(0, 0, 139), null, null, null, Font.BOLD);
     private static final TextAttributes taBemModKeyword = new TextAttributes(new Color(0, 0, 139), null, null, null, Font.BOLD);
     private static final TextAttributes taBemValue = new TextAttributes(new Color(69, 139, 0), null, null, null, Font.BOLD);
@@ -33,7 +32,7 @@ public class BemHtmlSyntaxHighlighter extends SyntaxHighlighterBase {
 
     @NotNull
     public Lexer getHighlightingLexer() {
-        return lexer;
+        return new CustomLexer(new BemHtmlTokenizer());
     }
 
     static final TextAttributesKey BAD_CHARACTER = TextAttributesKey.createTextAttributesKey(

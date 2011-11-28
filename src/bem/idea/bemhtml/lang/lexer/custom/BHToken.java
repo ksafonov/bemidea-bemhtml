@@ -2,13 +2,13 @@ package bem.idea.bemhtml.lang.lexer.custom;
 
 public class BHToken {
     private BHTokenType type;
-    private int start;
-    private int end;
+    public int tokenStart;
+    public int tokenEnd;
 
-    BHToken(BHTokenType type, int start, int end) {
+    BHToken(BHTokenType type, int tokenStart, int tokenEnd) {
         this.type = type;
-        this.start = start;
-        this.end = end;
+        this.tokenStart = tokenStart;
+        this.tokenEnd = tokenEnd;
     }
 
     public BHTokenType getType() {
@@ -19,16 +19,16 @@ public class BHToken {
         this.type = type;
     }
 
-    public int getStart() {
-        return start;
+    public int getTokenStart() {
+        return tokenStart;
     }
 
-    public int getEnd() {
-        return end;
+    public int getTokenEnd() {
+        return tokenEnd;
     }
 
     public void increment() {
-        end++;
+        tokenEnd++;
     }
 
     public void invalidate(BHTokenType errorType) {
@@ -36,6 +36,6 @@ public class BHToken {
     }
 
     public String toString() {
-        return type + "[" + start + ":" + end + "]";
+        return type + "[" + tokenStart + ":" + tokenEnd + "]";
     }
 }

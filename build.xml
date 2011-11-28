@@ -22,12 +22,6 @@
         <classpath refid="ideax.classpath"/>
     </taskdef>
 
-    <!-- Define the jflex compiler task -->
-
-    <taskdef name="jflexIdeax" classname="JFlex.anttask.JFlexTask">
-        <classpath location="${ideax.source}/tools/lexer/jflex-1.4/lib/JFlex.jar"/>
-    </taskdef>
-
     <!-- Clean up generated files -->
 
     <target name="clean">
@@ -50,19 +44,9 @@
         </copy>
     </target>
 
-    <!-- Generate the lexer class -->
-
-    <target name="generate-ideax-lexer">
-        <jflexIdeax skeleton="${ideax.source}/tools/lexer/idea-flex.skeleton" nobak="true"
-                    file="src/bem/idea/bemhtml/lang/lexer/bemhtml.flex"
-                    destdir="src"
-                    charat="true"/>
-    </target>
-
     <!-- Compile the plugin -->
 
-<!--    <target name="compile-ideax" depends="resources-ideax, generate-ideax-lexer"> -->
-    <target name="compile-ideax" depends="resources-ideax, generate-ideax-lexer">
+    <target name="compile-ideax" depends="resources-ideax">
         <javacIdeax srcdir="src" destdir="target/ideax-classes" source="1.5" target="1.5" includeantruntime="yes">
             <classpath refid="ideax.classpath"/>
         </javacIdeax>

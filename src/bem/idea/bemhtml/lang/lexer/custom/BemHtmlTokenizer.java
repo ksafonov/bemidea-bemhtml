@@ -5,13 +5,12 @@ import com.intellij.psi.tree.IElementType;
 
 import java.util.*;
 
-public class BemHtmlCustomLexer {
+public class BemHtmlTokenizer implements Tokenizer {
 
-    private String src;
-    private List<BHToken> tokens;
+    public String src;
     private List<BHBrace> bBraces;
     private Map<Integer, Integer> bBracesIdx;
-    private int current = -1;
+    public List<BHToken> tokens;
 
     private static Map<String, BHTokenType> bemKwd0;
     private static Map<String, BHTokenType> bemKwd1;
@@ -150,38 +149,26 @@ public class BemHtmlCustomLexer {
         skipBeforeColonSet.add(BHTokenType.ML_COMMENT);
     }
 
-    public BemHtmlCustomLexer() {}
-
-    public void parse(String src) {
-        this.src = src;
-        current = -1;
-        init();
-        tokenize();
-        retokenize();
-        validate();
+    public BemHtmlTokenizer() {
+        this(null);
     }
 
-    public void next() {
-        current++;
+    public BemHtmlTokenizer(String buffer) {
+        init(buffer);
+        parse();
     }
 
-    public IElementType getType() {
-        if (current < tokens.size()) return types.get(tokens.get(current).getType());
-        return null;
-    }
-
-    public int getPushback(int yyl) {
-        if (current < tokens.size()) {
-            BHToken t = tokens.get(current);
-            return yyl - (t.getEnd() - t.getStart() + 1);
-        }
-        return 0;
-    }
-
-    private void init() {
+    private void init(String buffer) {
+        src = buffer;
         tokens = new ArrayList<BHToken>();
         bBraces = new ArrayList<BHBrace>();
         bBracesIdx = new HashMap<Integer, Integer>();
+    }
+
+    private void parse() {
+        tokenize();
+        retokenize();
+        validate();
     }
 
     private void tokenize() {
@@ -313,7 +300,7 @@ public class BemHtmlCustomLexer {
                 last = toAdd;
                 if (!skip && toAdd != null) {
                     if (sb.length() > 0) {
-                        tokens.add(new BHToken(BHTokenType.IDENT, toAdd.getStart() - sb.length(), toAdd.getStart() - 1));
+                        tokens.add(new BHToken(BHTokenType.IDENT, toAdd.getTokenStart() - sb.length(), toAdd.getTokenStart() - 1));
                         sb = new StringBuilder();
                     }
                     tokens.add(toAdd);
@@ -336,35 +323,6 @@ public class BemHtmlCustomLexer {
         }
     }
 
-    private BHBrace findLastUnmatchedBrace(List<BHBrace> braces) {
-        BHBrace b;
-        for (int i = braces.size() - 1; i > -1; i--) {
-            b = braces.get(i);
-            if (b.getR() == -1) return b;
-        }
-        return null;
-    }
-
-    private int findBraceEnd(int i, char lb, char rb) {
-        int bc = 1, x;
-        char c;
-        i++;
-        for (int l = src.length(); i < l; i++) {
-            c = src.charAt(i);
-            if (c == lb) {
-                bc++;
-            } else if (c == rb) {
-                bc--;
-                if (bc == 0) return i;
-            } else if (c == '"' || c == '\'') {
-                x = findStringEnd(src, c, i + 1);
-                if (x == -1) return -1;
-                else i = x;
-            }
-        }
-        return -1;
-    }
-
     private void retokenize() {
         List<BHToken> _tokens = new ArrayList<BHToken>();
         BHToken t, nt = null, t0, t1;
@@ -379,7 +337,7 @@ public class BemHtmlCustomLexer {
                 nt = tokens.get(j); ntt = nt.getType();
             }
 
-            v = src.substring(t.getStart(), t.getEnd() + 1);
+            v = src.substring(t.getTokenStart(), t.getTokenEnd() + 1);
 
             if (wantJSON && !wantJSONSet.contains(tt)) {
                 if ((x = addJSExpression(i, _tokens)) != -1) i = x;
@@ -393,10 +351,10 @@ public class BemHtmlCustomLexer {
                         if (bBracesIdx.containsKey(i)) {
                             x = bBracesIdx.get(i);
                             t1 = tokens.get(x);
-                            _tokens.add(new BHToken(BHTokenType.JAVASCRIPT, t.getStart(), t1.getEnd()));
+                            _tokens.add(new BHToken(BHTokenType.JAVASCRIPT, t.getTokenStart(), t1.getTokenEnd()));
                             i = x;
                         } else {
-                            _tokens.add(new BHToken(BHTokenType.JAVASCRIPT, t.getStart(), tokens.get(l - 1).getEnd()));
+                            _tokens.add(new BHToken(BHTokenType.JAVASCRIPT, t.getTokenStart(), tokens.get(l - 1).getTokenEnd()));
                             i = l;
                         }
                     }
@@ -416,9 +374,9 @@ public class BemHtmlCustomLexer {
                         if (x > j) {
                             t0 = tokens.get(j + 1);
                             t1 = tokens.get(x);
-                            bvt = src.substring(t0.getStart(), t1.getEnd() + 1).matches("^[\\w\\-]+$") ? BHTokenType.BEM_VALUE : BHTokenType.JS_EXPRESSION;
+                            bvt = src.substring(t0.getTokenStart(), t1.getTokenEnd() + 1).matches("^[\\w\\-]+$") ? BHTokenType.BEM_VALUE : BHTokenType.JS_EXPRESSION;
                             if (t0 != t1) {
-                                _tokens.add(new BHToken(bvt, t0.getStart(), t1.getEnd()));
+                                _tokens.add(new BHToken(bvt, t0.getTokenStart(), t1.getTokenEnd()));
                             } else {
                                 t0.setType(bvt);
                                 _tokens.add(t0);
@@ -433,9 +391,9 @@ public class BemHtmlCustomLexer {
                                     if (x > j) {
                                         t0 = tokens.get(j + 1);
                                         t1 = tokens.get(x);
-                                        bvt = src.substring(t0.getStart(), t1.getEnd() + 1).matches("^[\\w\\-]+$") ? BHTokenType.BEM_VALUE : BHTokenType.JS_EXPRESSION;
+                                        bvt = src.substring(t0.getTokenStart(), t1.getTokenEnd() + 1).matches("^[\\w\\-]+$") ? BHTokenType.BEM_VALUE : BHTokenType.JS_EXPRESSION;
                                         if (t0 != t1) {
-                                            _tokens.add(new BHToken(bvt, t0.getStart(), t1.getEnd()));
+                                            _tokens.add(new BHToken(bvt, t0.getTokenStart(), t1.getTokenEnd()));
                                         } else {
                                             t0.setType(bvt);
                                             _tokens.add(t0);
@@ -465,33 +423,6 @@ public class BemHtmlCustomLexer {
         }
 
         tokens = _tokens;
-    }
-
-    private boolean isJSONBlock(int i) {
-        BHToken t;
-        BHTokenType tt;
-        for (int l = tokens.size(); i < l; i++) {
-            t = tokens.get(i);
-            tt = t.getType();
-            if (tt == BHTokenType.IDENT) {
-                return isJSONProperty(i);
-            } else if (tt != BHTokenType.WHITESPACE && tt != BHTokenType.NEWLINE) {
-                return false;
-            }
-        }
-        return false;
-    }
-
-    private int validateBemValue(int i, int num) {
-        BHList sub = getSemanticList(i + 1, num, ignoreSet0);
-        if (sub.getFiltered().size() == num) {
-            boolean valid = validateList(sub.getFiltered(), invalidateValueOrJSSet, BHTokenType.ERROR_ONE_BEM_VALUE_EXPECTED);
-
-            if (valid) validateTill(i + sub.getAll().size() + 1, invalidateBemValueSet, BHTokenType.ERROR_TOO_MANY_VALUES);
-
-            return sub.getAll().size();
-        }
-        return 0;
     }
 
     private void validate() {
@@ -539,103 +470,65 @@ public class BemHtmlCustomLexer {
         }
     }
 
-    private boolean isWrongColon(List<BHToken> tokens, int i) {
-        BHTokenType tt;
-        for (; i > -1; i--) {
-            tt = tokens.get(i).getType();
-            if (!skipBeforeColonSet.contains(tt)) {
-                return (!aloneTypesSet.contains(tt) &&
-                       !bemTypesSet.contains(tt) &&
-                       tt != BHTokenType.JS_EXPRESSION &&
-                       tt != BHTokenType.BH_JSONPROP) ||
-                       wasColon(tokens, i);
-            }
+    private static int findStringEnd(String s, char q, int start) {
+        char c;
+        for (int i = start, l = s.length(); i < l; i++) {
+            c = s.charAt(i);
+            if (c == q) return i;
+            else if (c == '\\') i++;
         }
-        return true;
+        return -1;
     }
 
-    private boolean wasColon(List<BHToken> tokens, int i) {
-        BHTokenType tt;
-        for (; i > -1; i--) {
-            tt = tokens.get(i).getType();
-            if (!skipBeforeColonSet.contains(tt)) {
-                switch (tt) {
-                    case COMMA:
-                    case NEWLINE:
-                    case L_BBRACE:
-                        return false;
-                    case COLON:
-                        return true;
-                }
-            }
+    private static int findSLCommentEnd(String s, int start) {
+        char c;
+        int i = start;
+        for (int l = s.length(); i < l; i++) {
+            c = s.charAt(i);
+            if (c == '\n' || c == '\r') return i - 1;
         }
-        return false;
+        return i > start ? i - 1 : start;
     }
 
-    private boolean validateList(List<BHToken> tokens,
-                                 Set<BHTokenType> expected,
-                                 BHTokenType errorType) {
-        BHToken t;
-        BHTokenType tt;
-        boolean valid = true;
-        for (int i = 0, l = tokens.size(); i < l; i++) {
-            t = tokens.get(i);
-            tt = t.getType();
-            if (!expected.contains(tt)) {
-                t.invalidate(errorType);
-                valid = false;
-            }
-        }
-        return valid;
-    }
-
-    private BHList getSemanticList(int start, int num, Set<BHTokenType> ignoreSet) {
-        List<BHToken> filtered = new ArrayList<BHToken>();
-        List<BHToken> all = new ArrayList<BHToken>();
-        BHToken t;
-        for (int i = start, l = tokens.size(); i < l && filtered.size() < num; i++) {
-            t = tokens.get(i);
-            if (!ignoreSet.contains(t.getType())) filtered.add(t);
-            all.add(t);
-        }
-        return new BHList(filtered, all);
-    }
-
-    private void validateTill(int i, Set<BHTokenType> tillSet, BHTokenType errorType) {
-        BHToken t;
-        BHTokenType tt;
-        for (int l = tokens.size(); i < l; i++) {
-            t = tokens.get(i);
-            tt = t.getType();
-            if (isSemanticToken(tt)) {
-                if (!tillSet.contains(tt)) t.invalidate(errorType);
-                else return;
-            }
-        }
-    }
-
-    private boolean isSemanticToken(BHTokenType tokenType) {
-        return tokenType != BHTokenType.WHITESPACE &&
-               tokenType != BHTokenType.SL_COMMENT &&
-               tokenType != BHTokenType.ML_COMMENT;
-    }
-
-    private int isValidJSONValue(int i) {
-        BHTokenType tt;
-        for (int l = tokens.size(); i < l; i++) {
-            tt = tokens.get(i).getType();
-            if (tt == BHTokenType.ERROR_UNFINISHED_ML_COMMENT) return -1;
-            if (tt != BHTokenType.WHITESPACE &&
-                    tt != BHTokenType.SL_COMMENT &&
-                    tt != BHTokenType.ML_COMMENT &&
-                    tt != BHTokenType.NEWLINE) {
-                if (tt != BHTokenType.JS_EXPRESSION &&
-                        tt != BHTokenType.L_BBRACE &&
-                        tt != BHTokenType.JAVASCRIPT) return i;
-                else return -1;
+    private static int findMLCommentEnd(String s, int start) {
+        char c;
+        int i = start, j = i + 1;
+        for (int l = s.length(); i < l; i++, j++) {
+            c = s.charAt(i);
+            if (c == '*' && j < l) {
+                if (s.charAt(j) == '/') return j;
             }
         }
         return -1;
+    }
+
+    private int findBraceEnd(int i, char lb, char rb) {
+        int bc = 1, x;
+        char c;
+        i++;
+        for (int l = src.length(); i < l; i++) {
+            c = src.charAt(i);
+            if (c == lb) {
+                bc++;
+            } else if (c == rb) {
+                bc--;
+                if (bc == 0) return i;
+            } else if (c == '"' || c == '\'') {
+                x = findStringEnd(src, c, i + 1);
+                if (x == -1) return -1;
+                else i = x;
+            }
+        }
+        return -1;
+    }
+
+    private BHBrace findLastUnmatchedBrace(List<BHBrace> braces) {
+        BHBrace b;
+        for (int i = braces.size() - 1; i > -1; i--) {
+            b = braces.get(i);
+            if (b.getR() == -1) return b;
+        }
+        return null;
     }
 
     private int addJSExpression(int i, List<BHToken> _tokens) {
@@ -644,7 +537,7 @@ public class BemHtmlCustomLexer {
             BHToken t0 = tokens.get(i);
             BHToken t1 = tokens.get(x);
             if (t0 != t1) {
-                _tokens.add(new BHToken(BHTokenType.JS_EXPRESSION, t0.getStart(), t1.getEnd()));
+                _tokens.add(new BHToken(BHTokenType.JS_EXPRESSION, t0.getTokenStart(), t1.getTokenEnd()));
             } else {
                 t0.setType(BHTokenType.JS_EXPRESSION);
                 _tokens.add(t0);
@@ -730,6 +623,60 @@ public class BemHtmlCustomLexer {
         return i - 1;
     }
 
+    private boolean isSemanticToken(BHTokenType tokenType) {
+        return tokenType != BHTokenType.WHITESPACE &&
+               tokenType != BHTokenType.SL_COMMENT &&
+               tokenType != BHTokenType.ML_COMMENT;
+    }
+
+    private boolean isWrongColon(List<BHToken> tokens, int i) {
+        BHTokenType tt;
+        for (; i > -1; i--) {
+            tt = tokens.get(i).getType();
+            if (!skipBeforeColonSet.contains(tt)) {
+                return (!aloneTypesSet.contains(tt) &&
+                       !bemTypesSet.contains(tt) &&
+                       tt != BHTokenType.JS_EXPRESSION &&
+                       tt != BHTokenType.BH_JSONPROP) ||
+                       wasColon(tokens, i);
+            }
+        }
+        return true;
+    }
+
+    private boolean wasColon(List<BHToken> tokens, int i) {
+        BHTokenType tt;
+        for (; i > -1; i--) {
+            tt = tokens.get(i).getType();
+            if (!skipBeforeColonSet.contains(tt)) {
+                switch (tt) {
+                    case COMMA:
+                    case NEWLINE:
+                    case L_BBRACE:
+                        return false;
+                    case COLON:
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isJSONBlock(int i) {
+        BHToken t;
+        BHTokenType tt;
+        for (int l = tokens.size(); i < l; i++) {
+            t = tokens.get(i);
+            tt = t.getType();
+            if (tt == BHTokenType.IDENT) {
+                return isJSONProperty(i);
+            } else if (tt != BHTokenType.WHITESPACE && tt != BHTokenType.NEWLINE) {
+                return false;
+            }
+        }
+        return false;
+    }
+
     private boolean isJSONProperty(int i) {
         int l = tokens.size();
         for (i++; i < l; i++) {
@@ -747,36 +694,141 @@ public class BemHtmlCustomLexer {
         return false;
     }
 
-    private static int findStringEnd(String s, char q, int start) {
-        char c;
-        for (int i = start, l = s.length(); i < l; i++) {
-            c = s.charAt(i);
-            if (c == q) return i;
-            else if (c == '\\') i++;
+    private int validateBemValue(int i, int num) {
+        BHList sub = getSemanticList(i + 1, num, ignoreSet0);
+        if (sub.getFiltered().size() == num) {
+            boolean valid = validateList(sub.getFiltered(), invalidateValueOrJSSet, BHTokenType.ERROR_ONE_BEM_VALUE_EXPECTED);
+
+            if (valid) validateTill(i + sub.getAll().size() + 1, invalidateBemValueSet, BHTokenType.ERROR_TOO_MANY_VALUES);
+
+            return sub.getAll().size();
         }
-        return -1;
+        return 0;
     }
 
-    private static int findSLCommentEnd(String s, int start) {
-        char c;
-        int i = start;
-        for (int l = s.length(); i < l; i++) {
-            c = s.charAt(i);
-            if (c == '\n' || c == '\r') return i - 1;
+    private boolean validateList(List<BHToken> tokens,
+                                 Set<BHTokenType> expected,
+                                 BHTokenType errorType) {
+        BHToken t;
+        BHTokenType tt;
+        boolean valid = true;
+        for (int i = 0, l = tokens.size(); i < l; i++) {
+            t = tokens.get(i);
+            tt = t.getType();
+            if (!expected.contains(tt)) {
+                t.invalidate(errorType);
+                valid = false;
+            }
         }
-        return i > start ? i - 1 : start;
+        return valid;
     }
 
-    private static int findMLCommentEnd(String s, int start) {
-        char c;
-        int i = start, j = i + 1;
-        for (int l = s.length(); i < l; i++, j++) {
-            c = s.charAt(i);
-            if (c == '*' && j < l) {
-                if (s.charAt(j) == '/') return j;
+    private BHList getSemanticList(int start, int num, Set<BHTokenType> ignoreSet) {
+        List<BHToken> filtered = new ArrayList<BHToken>();
+        List<BHToken> all = new ArrayList<BHToken>();
+        BHToken t;
+        for (int i = start, l = tokens.size(); i < l && filtered.size() < num; i++) {
+            t = tokens.get(i);
+            if (!ignoreSet.contains(t.getType())) filtered.add(t);
+            all.add(t);
+        }
+        return new BHList(filtered, all);
+    }
+
+    private void validateTill(int i, Set<BHTokenType> tillSet, BHTokenType errorType) {
+        BHToken t;
+        BHTokenType tt;
+        for (int l = tokens.size(); i < l; i++) {
+            t = tokens.get(i);
+            tt = t.getType();
+            if (isSemanticToken(tt)) {
+                if (!tillSet.contains(tt)) t.invalidate(errorType);
+                else return;
+            }
+        }
+    }
+
+    private int isValidJSONValue(int i) {
+        BHTokenType tt;
+        for (int l = tokens.size(); i < l; i++) {
+            tt = tokens.get(i).getType();
+            if (tt == BHTokenType.ERROR_UNFINISHED_ML_COMMENT) return -1;
+            if (tt != BHTokenType.WHITESPACE &&
+                    tt != BHTokenType.SL_COMMENT &&
+                    tt != BHTokenType.ML_COMMENT &&
+                    tt != BHTokenType.NEWLINE) {
+                if (tt != BHTokenType.JS_EXPRESSION &&
+                        tt != BHTokenType.L_BBRACE &&
+                        tt != BHTokenType.JAVASCRIPT) return i;
+                else return -1;
             }
         }
         return -1;
+    }
+
+    public int getTokenStart(int index) {
+        return tokens.get(index).getTokenStart();
+    }
+
+    public int getTokenEnd(int index) {
+        return tokens.get(index).getTokenEnd() + 1;
+    }
+
+    public IElementType getTokenType(int index) {
+        return index < tokens.size() ? types.get(tokens.get(index).getType()) : null;
+    }
+
+    public void resetSequence(CharSequence buffer) {
+        init(buffer.toString());
+        parse();
+    }
+
+    public static void main(String[] args) {
+        String src = "block b-block, elem myElem, default {\n" +
+                "    /* comment */\n" +
+                "    mod pseudo 'y'+'e'+'s': {\n" +
+                "        bem: false,\n" +
+                "        js: true,\n" +
+                "        tag: 'img',\n" +
+                "        myProperty: 'text',\n" +
+                "        mix: [ this.ctx ]\n" +
+                "    }\n" +
+                "    // comment\n" +
+                "    elemMod state current wrong {\n" +
+                "        content: {\n" +
+                "            tag: 'i',\n" +
+                "            elem: 'elem'\n" +
+                "        }\n" +
+                "    }\n" +
+                "\n" +
+                "    attrs, this.ctx.url: {\n" +
+                "        return { src: this.ctx.url };\n" +
+                "    }\n" +
+                "\n" +
+                "}";
+        BemHtmlTokenizer phcl = new BemHtmlTokenizer();
+        phcl._parse(src);
+    }
+
+    public void _parse(String src) {
+        this.src = src;
+        init(src);
+        tokenize();
+        System.out.println(tokens);
+        retokenize();
+        dump(tokens);
+        validate();
+        System.out.println("==================");
+        dump(tokens);
+        System.out.println(tokens.size());
+    }
+
+    private void dump(List<BHToken> tokens) {
+        BHToken t;
+        for (int i = 0, l = tokens.size(); i < l; i++) {
+            t = tokens.get(i);
+            System.out.println(t + ": \"" + src.substring(t.getTokenStart(), t.getTokenEnd() + 1) + "\"");
+        }
     }
 
 }

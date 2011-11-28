@@ -1,9 +1,10 @@
 package bem.idea.bemhtml.lang.parser;
 
 import bem.idea.bemhtml.file.BemHtmlFileType;
-import bem.idea.bemhtml.lang.lexer.BemHtmlParsingLexer;
 import bem.idea.bemhtml.lang.lexer.BemHtmlTokenSets;
 import bem.idea.bemhtml.lang.lexer.BemHtmlTokenTypes;
+import bem.idea.bemhtml.lang.lexer.custom.BemHtmlTokenizer;
+import bem.idea.bemhtml.lang.lexer.custom.CustomLexer;
 import bem.idea.bemhtml.lang.psi.impl.*;
 import com.intellij.lang.ASTNode;
 import com.intellij.lang.ParserDefinition;
@@ -23,7 +24,7 @@ public class BemHtmlParserDefinition implements ParserDefinition {
 
     @NotNull
     public Lexer createLexer(Project project) {
-        return new BemHtmlParsingLexer();
+        return new CustomLexer(new BemHtmlTokenizer());
     }
 
     public PsiParser createParser(Project project) {
