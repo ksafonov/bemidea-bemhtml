@@ -1,3 +1,7 @@
+####1.0.13:
+
+* Bug: Error: pushback value was too large, [issues/11] (https://github.com/afelix/bemidea-bemhtml/issues/11).
+
 ####1.0.12:
 
 * Bug: incorrect resolving of `===` inside JS-expression, [issues/22] (https://github.com/afelix/bemidea-bemhtml/issues/22).
