@@ -57,10 +57,10 @@
     <target name="jar" depends="compile-ideax" description="Build the plugin jar">
         <copy file="META-INF/plugin.xml" todir="target/ideax-classes/META-INF">
             <filterset>
-                <filter token="version" value="1.0.13"/>
+                <filter token="version" value="1.0.14"/>
             </filterset>
         </copy>
-        <jar destfile="target/jar/bemhtml-1.0.13.jar" compress="true">
+        <jar destfile="target/jar/bemhtml-1.0.14.jar" compress="true">
             <fileset dir="target/ideax-classes"/>
         </jar>
     </target>

@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <name>BEM Support</name>
     <description>BEM Plugin: BEMHTML language support</description>
-    <version>1.0.13</version>
+    <version>1.0.14</version>
     <idea-version since-build="99.18"/>
     <vendor url="https://github.com/afelix/bemidea-bemhtml">BEM</vendor>
     <change-notes><![CDATA[
