@@ -1,30 +1,17 @@
 package bem.idea.bemhtml.lang.psi.impl;
 
 import com.intellij.lang.ASTNode;
-import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.LiteralTextEscaper;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.impl.source.tree.LeafElement;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 public class BemHtmlBaseJSElementImpl extends BemHtmlElementImpl implements PsiLanguageInjectionHost {
 
     public BemHtmlBaseJSElementImpl(ASTNode node) {
         super(node);
-    }
-
-    public List<Pair<PsiElement, TextRange>> getInjectedPsi() {
-        return InjectedLanguageUtil.getInjectedPsiFiles(this);
-    }
-
-    public void processInjectedPsi(@NotNull PsiLanguageInjectionHost.InjectedPsiVisitor visitor) {
-        InjectedLanguageUtil.enumerate(this, visitor);
     }
 
     public PsiLanguageInjectionHost updateText(@NotNull String text) {
@@ -36,6 +23,11 @@ public class BemHtmlBaseJSElementImpl extends BemHtmlElementImpl implements PsiL
     @NotNull
     public LiteralTextEscaper<? extends PsiLanguageInjectionHost> createLiteralTextEscaper() {
         return new StringLiteralEscaper(this);
+    }
+
+    @Override
+    public boolean isValidHost() {
+        return true;
     }
 
     // Copy from IDEA10 to avoid exceptions in IDEA11
